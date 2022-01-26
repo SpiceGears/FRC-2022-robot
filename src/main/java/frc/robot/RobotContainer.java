@@ -38,7 +38,7 @@ public class RobotContainer {
               m_DriveTrainSubsystem.setMotorPercentageOutput(
                   m_driverController.getRawAxis(1),
                   m_driverController.getRawAxis(1),
-                  m_driverController.getRawAxis(2));
+                  m_driverController.getRawAxis(2) * Constants.Joystick.JOYSTICK_TURN_AXIS_MULTIPLIER);
             }, m_DriveTrainSubsystem));
   }
 
@@ -53,11 +53,11 @@ public class RobotContainer {
   private void configureButtonBindings() {
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
+  // /**
+  // * Use this to pass the autonomous command to the main {@link Robot} class.
+  // *
+  // * @return the command to run in autonomous
+  // */
   // public Command getAutonomousCommand() {
   // // An ExampleCommand will run in autonomous
   // return m_autoCommand;

@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
+import org.opencv.core.Mat;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
@@ -35,12 +34,14 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
 
     private void configureEncoders() {
+        leftEncoder = new Encoder(PortMap.DriveTrain.LEFT_ENCODER_A, PortMap.DriveTrain.LEFT_ENCODER_B);
         leftEncoder.setDistancePerPulse(
                 Constants.DriveTrain.ROBOT_DISTANCE_PER_ROTATION / Constants.DriveTrain.ENCODER_TICK_RATE);
         leftEncoder.setMaxPeriod(Constants.DriveTrain.ENCODER_MIN_RATE);
         leftEncoder.setReverseDirection(Constants.DriveTrain.ENCODER_LEFT_REVERSE);
         leftEncoder.setSamplesToAverage(Constants.DriveTrain.ENCODER_SAMPLES_TO_AVERAGE);
 
+        rightEncoder = new Encoder(PortMap.DriveTrain.RIGHT_ENCODER_A, PortMap.DriveTrain.RIGHT_ENCODER_B);
         rightEncoder.setDistancePerPulse(
                 Constants.DriveTrain.ROBOT_DISTANCE_PER_ROTATION / Constants.DriveTrain.ENCODER_TICK_RATE);
         rightEncoder.setMaxPeriod(Constants.DriveTrain.ENCODER_MIN_RATE);
@@ -63,8 +64,17 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
 
     public void setMotorPercentageOutput(double leftOut, double rightOut, double turn) {
-        setLeftPercentOutput(leftOut + turn);
-        setRightPercentOutput(rightOut - turn);
+        if (Math.abs(leftOut) < Constants.DriveTrain.MOTOR_MIN_OUT) {
+            leftOut = 0;
+        }
+        if (Math.abs(rightOut) < Constants.DriveTrain.MOTOR_MIN_OUT) {
+            rightOut = 0;
+        }
+        if (Math.abs(turn) < Constants.DriveTrain.MOTOR_MIN_OUT) {
+            turn = 0;
+        }
+        setLeftPercentOutput(leftOut - turn);
+        setRightPercentOutput(rightOut + turn);
     }
 
     /**

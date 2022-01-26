@@ -18,16 +18,28 @@ package frc.robot;
  */
 public final class Constants {
 
+    public static class Joystick {
+        public static final double JOYSTICK_TURN_AXIS_MULTIPLIER = 0.3;
+    }
+
     public static class DriveTrain {
+
+        public static final double ROBOT_DRIVE_WHEEL_CIRCUIT = 478.77872; // in mm
         public static final double ENCODER_TICK_RATE = 256;
-        public static final double ENCODER_MIN_RATE = 5; // Configures the encoder to consider itself stopped when it is
-                                                         // bellow min rate
+        public static final double ENCODER_MIN_RATE = 10; // Configures the encoder to consider itself stopped when it
+                                                          // is bellow min rate
         public static final int ENCODER_SAMPLES_TO_AVERAGE = 5; // Can be between 1 and 127
 
         public static final boolean ENCODER_RIGHT_REVERSE = false;
         public static final boolean ENCODER_LEFT_REVERSE = true;
 
-        public static final double ROBOT_DISTANCE_PER_ROTATION = 2; // The distance the robot will travel with one
-                                                                    // revolution of the motor [mm]
+        public static final double ROBOT_DISTANCE_PER_ROTATION = ROBOT_DRIVE_WHEEL_CIRCUIT; // The distance the robot
+                                                                                            // will travel with one
+                                                                                            // revolution of the motor
+                                                                                            // [mm]
+
+        public static final double MOTOR_MIN_OUT = 0.27; // Configures the joystick to consider itself as still (0)
+                                                         // when it is bellow min rate
     }
+
 }
