@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 
@@ -37,8 +38,8 @@ public class RobotContainer {
               m_DriveTrainSubsystem.setMotorPercentageOutput(
                   m_driverController.getRawAxis(1),
                   m_driverController.getRawAxis(1),
-                  m_driverController.getRawAxis(4));
-            }));
+                  m_driverController.getRawAxis(2));
+            }, m_DriveTrainSubsystem));
   }
 
   /**
@@ -64,5 +65,6 @@ public class RobotContainer {
 
   public void updateSmartDashboard() {
     m_DriveTrainSubsystem.updateSmartDashboard();
+    SmartDashboard.putNumber("joistick x", m_driverController.getRawAxis(1));
   }
 }

@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -11,8 +12,8 @@ import frc.robot.PortMap;
 
 public class DriveTrainSubsystem extends SubsystemBase {
 
-    private CANSparkMax rightMotor, rightMotorSlave;
-    private CANSparkMax leftMasterMotor, leftMotorSlave;
+    private Spark rightMotor, rightMotorSlave;
+    private Spark leftMasterMotor, leftMotorSlave;
 
     private Encoder leftEncoder, rightEncoder;
 
@@ -21,23 +22,16 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
 
     private void configureMotors() {
-        rightMotor = new CANSparkMax(PortMap.DriveTrain.FRONT_RIGHT_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushed);
-        rightMotorSlave = new CANSparkMax(PortMap.DriveTrain.BACK_RIGHT_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushed);
-        rightMotor.restoreFactoryDefaults();
-        rightMotorSlave.restoreFactoryDefaults();
+        rightMotor = new Spark(PortMap.DriveTrain.FRONT_RIGHT_MOTOR);
+        rightMotorSlave = new Spark(PortMap.DriveTrain.BACK_RIGHT_MOTOR);
 
-        leftMasterMotor = new CANSparkMax(PortMap.DriveTrain.FRONT_LEFT_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushed);
-        leftMotorSlave = new CANSparkMax(PortMap.DriveTrain.BACK_LEFT_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushed);
-        leftMotorSlave.restoreFactoryDefaults();
-        leftMasterMotor.restoreFactoryDefaults();
+        leftMasterMotor = new Spark(PortMap.DriveTrain.FRONT_LEFT_MOTOR);
+        leftMotorSlave = new Spark(PortMap.DriveTrain.BACK_LEFT_MOTOR);
 
         leftMasterMotor.setInverted(true);
         leftMotorSlave.setInverted(true);
 
-        rightMotorSlave.follow(rightMotor);
-        leftMotorSlave.follow(leftMasterMotor);
-
-        configureEncoders();
+        // configureEncoders();
     }
 
     private void configureEncoders() {
@@ -56,10 +50,16 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
     public void setLeftPercentOutput(double output) {
         leftMasterMotor.set(output);
+        leftMotorSlave.set(output);
+
+        SmartDashboard.putNumber("Left motor out", output);
     }
 
     public void setRightPercentOutput(double output) {
         rightMotor.set(output);
+        rightMotorSlave.set(output);
+
+        SmartDashboard.putNumber("Right motor out", output);
     }
 
     public void setMotorPercentageOutput(double leftOut, double rightOut, double turn) {
@@ -110,9 +110,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
 
     public void updateSmartDashboard() {
-        SmartDashboard.putNumber("Left encoder rate", getLeftEncoderRate());
-        SmartDashboard.putNumber("Right encoder rate", getRightEncoderRate());
-        SmartDashboard.putNumber("Left encoder distance", getLeftEncoderDistance());
-        SmartDashboard.putNumber("Right encoder distance", getRightEncoderDistance());
+        // SmartDashboard.putNumber("Left encoder rate", getLeftEncoderRate());
+        // SmartDashboard.putNumber("Right encoder rate", getRightEncoderRate());
+        // SmartDashboard.putNumber("Left encoder distance", getLeftEncoderDistance());
+        // SmartDashboard.putNumber("Right encoder distance",
+        // getRightEncoderDistance());
     }
 }

@@ -8,10 +8,10 @@ package frc.robot;
 public class PortMap {
 
     public static class DriveTrain {
-        public static final int FRONT_LEFT_MOTOR = 3;
-        public static final int BACK_LEFT_MOTOR = 2;
+        public static final int FRONT_LEFT_MOTOR = 8;
+        public static final int BACK_LEFT_MOTOR = 9;
 
-        public static final int FRONT_RIGHT_MOTOR = 1;
-        public static final int BACK_RIGHT_MOTOR = 0;
+        public static final int FRONT_RIGHT_MOTOR = 7;
+        public static final int BACK_RIGHT_MOTOR = 6;
     }
 }
