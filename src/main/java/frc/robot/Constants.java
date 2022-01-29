@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import com.fasterxml.jackson.databind.jsontype.impl.StdSubtypeResolver;
+
+import edu.wpi.first.math.StateSpaceUtil;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -42,4 +46,17 @@ public final class Constants {
                                                          // when it is bellow min rate
     }
 
+    public static class Intake {
+
+        // NOT CURRENT VALUES
+        public static final double ROBOT_INTAKE_WHEEL_CIRCUIT = 100; // [mm]
+        public static final double ENCODER_TICK_RATE = 256;
+        public static final double ENCODER_MIN_RATE = 10; // Configures the encoder to consider itself stopped when it is bellow min rate
+        public static final double ROBOT_DISTANCE_PER_ROTATION = ROBOT_INTAKE_WHEEL_CIRCUIT; // The distance the robot will travel with one revolution of the motor [mm]
+        
+        public static final int ENCODER_SAMPLES_TO_AVERAGE = 5; // Can be between 1 and 127
+
+        public static final boolean ENCODER_REVERSE = false;
+        
+    }
 }

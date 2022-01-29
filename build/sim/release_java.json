@@ -1,0 +1,21 @@
+[
+  {
+    "type": "java",
+    "name": "jar (in project FRC-2022-robot)",
+    "extensions": [
+      {
+        "name": "Sim DriverStation",
+        "libName": "A:\\GithubRepo\\FRC-2022-robot\\build\\jni\\release\\halsim_ds_socket.dll",
+        "defaultEnabled": false
+      },
+      {
+        "name": "Sim GUI",
+        "libName": "A:\\GithubRepo\\FRC-2022-robot\\build\\jni\\release\\halsim_gui.dll",
+        "defaultEnabled": true
+      }
+    ],
+    "environment": {},
+    "libraryDir": "A:\\GithubRepo\\FRC-2022-robot\\build\\jni\\release",
+    "mainClassName": "frc.robot.Main"
+  }
+]
