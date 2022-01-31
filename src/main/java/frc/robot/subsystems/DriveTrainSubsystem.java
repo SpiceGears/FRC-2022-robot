@@ -64,15 +64,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
 
     public void setMotorPercentageOutput(double leftOut, double rightOut, double turn) {
-        if (Math.abs(leftOut) < Constants.DriveTrain.MOTOR_MIN_OUT) {
-            leftOut = 0;
-        }
-        if (Math.abs(rightOut) < Constants.DriveTrain.MOTOR_MIN_OUT) {
-            rightOut = 0;
-        }
-        if (Math.abs(turn) < Constants.DriveTrain.MOTOR_MIN_OUT) {
-            turn = 0;
-        }
+        if (Math.abs(leftOut) < Constants.DriveTrain.MOTOR_MIN_OUT) leftOut = 0;
+        if (Math.abs(rightOut) < Constants.DriveTrain.MOTOR_MIN_OUT) rightOut = 0;
+        if (Math.abs(turn) < Constants.DriveTrain.MOTOR_MIN_OUT) turn = 0;
         setLeftPercentOutput(leftOut - turn);
         setRightPercentOutput(rightOut + turn);
     }
