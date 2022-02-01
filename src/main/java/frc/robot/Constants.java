@@ -58,6 +58,7 @@ public final class Constants {
                                                                     // when it is bellow min rate
         public static final double MOTOR_MIN_VOLTAGE_OUT = 0.5; // Configures the motor to consider itself as still
                                                                 // when it is bellow min rate
+        public static final double MAX_ROBOT_SPEED = 2.5; // Max robot speed in teleoperated mode [m/s] (1m/s = 3,6km/h)
     }
 
 }

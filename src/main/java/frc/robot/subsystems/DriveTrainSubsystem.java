@@ -97,8 +97,103 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @param turnInput  1 = 100% right turn
      */
     public void joystickDriveTrain(double speedInput, double turnInput) {
-        double lOutput, rOutput;
+        double lOutput = 0;
+        double rOutput = 0;
 
+        // no turn
+        if (turnInput == 0) {
+            lOutput = speedInput;
+            rOutput = speedInput;
+        } else {
+            // Turn and speed added are less or equal than 100%
+            if (Math.abs(speedInput) + Math.abs(turnInput) <= 1 && Math.abs(speedInput) + Math.abs(turnInput) != 0) {
+                // Ride foreword
+                if (speedInput > 0) {
+                    // turning right
+                    if (turnInput > 0) {
+                        lOutput = speedInput + turnInput;
+                        rOutput = speedInput;
+                    }
+                    // turning left
+                    else if (turnInput < 0) {
+                        lOutput = speedInput;
+                        rOutput = speedInput - turnInput;
+                    }
+                } else {
+                    // turning right
+                    if (turnInput > 0) {
+                        lOutput = speedInput - turnInput;
+                        rOutput = speedInput;
+                    }
+                    // turning left
+                    else if (turnInput < 0) {
+                        lOutput = speedInput;
+                        rOutput = speedInput + turnInput;
+                    }
+                }
+            }
+            // Turn and speed added are greater than 100%
+            else if (Math.abs(speedInput) + Math.abs(turnInput) > 1
+                    && Math.abs(speedInput) + Math.abs(turnInput) != 0) {
+                if (Math.abs(speedInput) >= 1) {
+                    // Ride foreword
+                    if (speedInput > 0) {
+                        // turning right
+                        if (turnInput > 0) {
+                            lOutput = speedInput;
+                            rOutput = speedInput - turnInput;
+                        }
+                        // turning left
+                        else if (turnInput < 0) {
+                            lOutput = speedInput + turnInput;
+                            rOutput = speedInput;
+                        }
+                    }
+                    // Ride backward
+                    else {
+                        // turning right
+                        if (turnInput > 0) {
+                            lOutput = speedInput;
+                            rOutput = speedInput + turnInput;
+                        }
+                        // turning left
+                        else if (turnInput < 0) {
+                            lOutput = speedInput - turnInput;
+                            rOutput = speedInput;
+                        }
+                    }
+                } else {
+                    // Ride foreword
+                    if (speedInput > 0) {
+                        // turning right
+                        if (turnInput > 0) {
+                            lOutput = 1;
+                            rOutput = speedInput - (speedInput + turnInput - 1);
+                        }
+                        // turning left
+                        else if (turnInput < 0) {
+                            lOutput = speedInput - (speedInput - turnInput - 1);
+                            rOutput = 1;
+                        }
+                    }
+                    // Ride backward
+                    else {
+                        // turning right
+                        if (turnInput > 0) {
+                            lOutput = -1;
+                            rOutput = -speedInput + (speedInput + turnInput - 1);
+                        }
+                        // turning left
+                        else if (turnInput < 0) {
+                            lOutput = -speedInput + (speedInput - turnInput - 1);
+                            rOutput = -1;
+                        }
+                    }
+                }
+            }
+        }
+        lOutput *= Constants.DriveTrain.MAX_ROBOT_SPEED;
+        rOutput *= Constants.DriveTrain.MAX_ROBOT_SPEED;
     }
 
     /**
