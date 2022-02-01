@@ -35,7 +35,7 @@ public class RobotContainer {
     m_DriveTrainSubsystem.setDefaultCommand(
         new RunCommand(
             () -> {
-              m_DriveTrainSubsystem.setMotorPercentageOutput(
+              m_DriveTrainSubsystem.setRawMotorPercentageOutput(
                   m_driverController.getRawAxis(1),
                   m_driverController.getRawAxis(1),
                   m_driverController.getRawAxis(2) * Constants.Joystick.JOYSTICK_TURN_AXIS_MULTIPLIER);

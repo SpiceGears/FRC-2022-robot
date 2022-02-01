@@ -24,6 +24,22 @@ public final class Constants {
 
     public static class DriveTrain {
 
+        public static class PID {
+            public static final double LEFT_KP = 0.0;
+            public static final double LEFT_KI = 0.0;
+            public static final double LEFT_KD = 0.0;
+
+            public static final double RIGHT_KP = 0.0;
+            public static final double RIGHT_KI = 0.0;
+            public static final double RIGHT_KD = 0.0;
+        }
+
+        public static class Feedforward {
+            public static final double KS = 0;
+            public static final double KV = 0;
+            public static final double KA = 0;
+        }
+
         public static final double ROBOT_DRIVE_WHEEL_CIRCUIT = 478.77872; // in mm
         public static final double ENCODER_TICK_RATE = 256;
         public static final double ENCODER_MIN_RATE = 10; // Configures the encoder to consider itself stopped when it
@@ -38,8 +54,10 @@ public final class Constants {
                                                                                             // revolution of the motor
                                                                                             // [mm]
 
-        public static final double MOTOR_MIN_OUT = 0.27; // Configures the joystick to consider itself as still (0)
-                                                         // when it is bellow min rate
+        public static final double MOTOR_MIN_PERCENTAGE_OUT = 0.27; // Configures the motor to consider itself as still
+                                                                    // when it is bellow min rate
+        public static final double MOTOR_MIN_VOLTAGE_OUT = 0.5; // Configures the motor to consider itself as still
+                                                                // when it is bellow min rate
     }
 
 }
