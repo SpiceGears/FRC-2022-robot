@@ -16,9 +16,9 @@ public class PortMap {
         public static final int FRONT_RIGHT_MOTOR = 1;
         public static final int BACK_RIGHT_MOTOR = 0;
 
-        public static final DigitalSource LEFT_ENCODER_A = null;
-        public static final DigitalSource LEFT_ENCODER_B = null;
-        public static final DigitalSource RIGHT_ENCODER_A = null;
-        public static final DigitalSource RIGHT_ENCODER_B = null;
+        public static final int LEFT_ENCODER_A = 0;
+        public static final int LEFT_ENCODER_B = 1;
+        public static final int RIGHT_ENCODER_A = 2;
+        public static final int RIGHT_ENCODER_B = 3;
     }
 }

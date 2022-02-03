@@ -46,6 +46,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
         leftMasterMotor.setInverted(true);
         leftMotorSlave.setInverted(true);
 
+        rightMasterMotor.setInverted(true);
+        rightMotorSlave.setInverted(true);
+
         configureEncoders();
     }
 
@@ -100,13 +103,27 @@ public class DriveTrainSubsystem extends SubsystemBase {
         double lOutput = 0;
         double rOutput = 0;
 
+        if (Math.abs(speedInput) < Constants.DriveTrain.MOTOR_MIN_PERCENTAGE_OUT)
+            speedInput = 0;
+        if (Math.abs(turnInput) < Constants.DriveTrain.MOTOR_MIN_PERCENTAGE_OUT)
+            turnInput = 0;
+
+        SmartDashboard.putNumber("In speedInput", speedInput);
+        SmartDashboard.putNumber("In turnInput", turnInput);
+
         // no turn
         if (turnInput == 0) {
             lOutput = speedInput;
             rOutput = speedInput;
         } else {
+
+            if (Math.abs(speedInput) <= 0.4) {
+                lOutput = speedInput - turnInput;
+                rOutput = speedInput + turnInput;
+            }
             // Turn and speed added are less or equal than 100%
-            if (Math.abs(speedInput) + Math.abs(turnInput) <= 1 && Math.abs(speedInput) + Math.abs(turnInput) != 0) {
+            else if (Math.abs(speedInput) + Math.abs(turnInput) <= 1
+                    && Math.abs(speedInput) + Math.abs(turnInput) != 0) {
                 // Ride foreword
                 if (speedInput > 0) {
                     // turning right
@@ -192,8 +209,14 @@ public class DriveTrainSubsystem extends SubsystemBase {
                 }
             }
         }
+
         lOutput *= Constants.DriveTrain.MAX_ROBOT_SPEED;
         rOutput *= Constants.DriveTrain.MAX_ROBOT_SPEED;
+
+        SmartDashboard.putNumber("Out left", lOutput);
+        SmartDashboard.putNumber("Out right", rOutput);
+
+        driveFeedforwardPID(lOutput, rOutput);
     }
 
     /**
@@ -203,17 +226,28 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @param rightSetpoint voltage setpoint m/s
      */
     public void driveFeedforwardPID(double leftSetpoint, double rightSetpoint) {
-        double leftOut = feedforward.calculate(leftSetpoint)
-                + lPIDMotorController.calculate(getLeftEncoderRate() / 100, leftSetpoint);
-        double rightOut = feedforward.calculate(rightSetpoint)
-                + rPIDMotorController.calculate(getRightEncoderRate() / 100, rightSetpoint);
+        // double leftOut = feedforward.calculate(leftSetpoint)
+        // + lPIDMotorController.calculate(getLeftEncoderRate(), leftSetpoint / 100);
+        // double rightOut = feedforward.calculate(rightSetpoint)
+        // + rPIDMotorController.calculate(getRightEncoderRate(), rightSetpoint / 100);
+        double leftOut = lPIDMotorController.calculate(getLeftEncoderRate(), leftSetpoint * 1000);
+        double rightOut = rPIDMotorController.calculate(getRightEncoderRate(), rightSetpoint * 1000);
 
-        if (Math.abs(leftOut) < Constants.DriveTrain.MOTOR_MIN_VOLTAGE_OUT)
-            leftOut = 0;
-        if (Math.abs(rightOut) < Constants.DriveTrain.MOTOR_MIN_VOLTAGE_OUT)
-            rightOut = 0;
-        leftMasterMotor.setVoltage(leftOut);
-        rightMasterMotor.setVoltage(rightOut);
+        // if (Math.abs(leftOut) < Constants.DriveTrain.MOTOR_MIN_VOLTAGE_OUT)
+        // leftOut = 0;
+        // if (Math.abs(rightOut) < Constants.DriveTrain.MOTOR_MIN_VOLTAGE_OUT)
+        // rightOut = 0;
+        leftMasterMotor.setVoltage(leftOut * 12);
+        leftMotorSlave.setVoltage(leftOut * 12);
+
+        rightMasterMotor.setVoltage(rightOut * 12);
+        rightMotorSlave.setVoltage(rightOut * 12);
+
+        SmartDashboard.putNumber("getLeftEncoderRate()", -getLeftEncoderRate());
+        SmartDashboard.putNumber("getRightEncoderRate()", getRightEncoderRate());
+
+        SmartDashboard.putNumber("leftSetpoint * 1000", -leftSetpoint * 1000);
+        SmartDashboard.putNumber("leftSetpoint * 1000", leftSetpoint * 1000);
 
         SmartDashboard.putNumber("Left driveFeedforwardPID", leftOut);
         SmartDashboard.putNumber("Right driveFeedforwardPID", rightOut);
@@ -225,7 +259,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @return The distance traveled in mm.
      */
     public double getLeftEncoderDistance() {
-        return leftEncoder.getDistance();
+        return -leftEncoder.getDistance();
     }
 
     /**
@@ -234,7 +268,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @return The distance traveled in mm.
      */
     public double getRightEncoderDistance() {
-        return rightEncoder.getDistance();
+        return -rightEncoder.getDistance();
     }
 
     /**
@@ -243,7 +277,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @return rate in ticks.
      */
     public double getLeftEncoderRate() {
-        return leftEncoder.getRate();
+        return -leftEncoder.getRate();
     }
 
     /**
@@ -252,7 +286,25 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @return rate in ticks.
      */
     public double getRightEncoderRate() {
-        return rightEncoder.getRate();
+        return -rightEncoder.getRate();
+    }
+
+    /**
+     * Gets the current speed of the encoder km/h
+     * 
+     * @return rate in ticks.
+     */
+    public double getRightEncoderSpeed() {
+        return -rightEncoder.getRate() * 0.0036;
+    }
+
+    /**
+     * Gets the current speed of the encoder km/h
+     * 
+     * @return rate in ticks.
+     */
+    public double getLeftEncoderSpeed() {
+        return -leftEncoder.getRate() * 0.0036;
     }
 
     /** Resets the encoders to read a distance of zero */
@@ -262,10 +314,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
 
     public void updateSmartDashboard() {
-        // SmartDashboard.putNumber("Left encoder rate", getLeftEncoderRate());
-        // SmartDashboard.putNumber("Right encoder rate", getRightEncoderRate());
-        // SmartDashboard.putNumber("Left encoder distance", getLeftEncoderDistance());
-        // SmartDashboard.putNumber("Right encoder distance",
-        // getRightEncoderDistance());
+        SmartDashboard.putNumber("Left encoder rate", getLeftEncoderRate());
+        SmartDashboard.putNumber("Right encoder rate", getRightEncoderRate());
+        SmartDashboard.putNumber("Left encoder distance", getLeftEncoderDistance());
+        SmartDashboard.putNumber("Right encoder distance", getRightEncoderDistance());
+        SmartDashboard.putNumber("Left encoder speed", getLeftEncoderSpeed());
+        SmartDashboard.putNumber("Right encoder speed", getRightEncoderSpeed());
     }
 }

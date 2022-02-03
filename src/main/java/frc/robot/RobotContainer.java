@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final DriveTrainSubsystem m_DriveTrainSubsystem = new DriveTrainSubsystem();
+  public DriveTrainSubsystem m_DriveTrainSubsystem = new DriveTrainSubsystem();
 
   XboxController m_driverController = new XboxController(0);
 
@@ -35,10 +35,9 @@ public class RobotContainer {
     m_DriveTrainSubsystem.setDefaultCommand(
         new RunCommand(
             () -> {
-              m_DriveTrainSubsystem.setRawMotorPercentageOutput(
+              m_DriveTrainSubsystem.joystickDriveTrain(
                   m_driverController.getRawAxis(1),
-                  m_driverController.getRawAxis(1),
-                  m_driverController.getRawAxis(2) * Constants.Joystick.JOYSTICK_TURN_AXIS_MULTIPLIER);
+                  m_driverController.getRawAxis(4) * Constants.Joystick.JOYSTICK_TURN_AXIS_MULTIPLIER);
             }, m_DriveTrainSubsystem));
   }
 

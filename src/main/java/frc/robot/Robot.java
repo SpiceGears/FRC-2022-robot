@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    m_robotContainer.m_DriveTrainSubsystem.resetEncoders();
   }
 
   /**
@@ -63,6 +64,7 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    m_robotContainer.m_DriveTrainSubsystem.resetEncoders();
   }
 
   @Override

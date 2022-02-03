@@ -25,13 +25,13 @@ public final class Constants {
     public static class DriveTrain {
 
         public static class PID {
-            public static final double LEFT_KP = 0.0;
-            public static final double LEFT_KI = 0.0;
-            public static final double LEFT_KD = 0.0;
+            public static final double LEFT_KP = 0.0000812;
+            public static final double LEFT_KI = 0;
+            public static final double LEFT_KD = 0;
 
-            public static final double RIGHT_KP = 0.0;
-            public static final double RIGHT_KI = 0.0;
-            public static final double RIGHT_KD = 0.0;
+            public static final double RIGHT_KP = LEFT_KP;
+            public static final double RIGHT_KI = LEFT_KI;
+            public static final double RIGHT_KD = LEFT_KD;
         }
 
         public static class Feedforward {
@@ -41,7 +41,7 @@ public final class Constants {
         }
 
         public static final double ROBOT_DRIVE_WHEEL_CIRCUIT = 478.77872; // in mm
-        public static final double ENCODER_TICK_RATE = 256;
+        public static final double ENCODER_TICK_RATE = 2048;
         public static final double ENCODER_MIN_RATE = 10; // Configures the encoder to consider itself stopped when it
                                                           // is bellow min rate
         public static final int ENCODER_SAMPLES_TO_AVERAGE = 5; // Can be between 1 and 127
@@ -54,11 +54,11 @@ public final class Constants {
                                                                                             // revolution of the motor
                                                                                             // [mm]
 
-        public static final double MOTOR_MIN_PERCENTAGE_OUT = 0.27; // Configures the motor to consider itself as still
-                                                                    // when it is bellow min rate
+        public static final double MOTOR_MIN_PERCENTAGE_OUT = 0.2; // Configures the motor to consider itself as still
+                                                                   // when it is bellow min rate
         public static final double MOTOR_MIN_VOLTAGE_OUT = 0.5; // Configures the motor to consider itself as still
                                                                 // when it is bellow min rate
-        public static final double MAX_ROBOT_SPEED = 2.5; // Max robot speed in teleoperated mode [m/s] (1m/s = 3,6km/h)
+        public static final double MAX_ROBOT_SPEED = 12; // Max robot speed in teleoperated mode [m/s] (1m/s = 3,6km/h)
     }
 
 }
