@@ -11,6 +11,8 @@ import frc.robot.PortMap;
 
 public class IntakeSubsystem extends SubsystemBase {
 
+    private PIDController pid = new PIDController(Constants.Intake.PID.KP, Constants.Intake.PID.KI, Constants.Intake.PID.KD);
+
     private VictorSP intakeMotor;
     private Encoder intakeEncoder;
     private DoubleSolenoid intakeSolenoid;
