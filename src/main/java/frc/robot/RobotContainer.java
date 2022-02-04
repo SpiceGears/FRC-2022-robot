@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.Intake.ToggleIntake;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -25,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveTrainSubsystem m_DriveTrainSubsystem = new DriveTrainSubsystem();
-  private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+  public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
 
   XboxController m_driverController = new XboxController(0);
 
@@ -34,11 +35,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // Configure the button bindings
-    configureButtonBindings(); {
-      final JoystickButton a = new JoystickButton(m_driverController, 1);
-
-      // a.whenPressed(m_IntakeSubsystem.openIntake());
-    }
+    configureButtonBindings();
 
     m_DriveTrainSubsystem.setDefaultCommand(
         new RunCommand(
@@ -59,6 +56,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    final JoystickButton button_a = new JoystickButton(m_driverController, 1);
+
+    button_a.whenPressed(new ToggleIntake());
   }
 
   // /**
