@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DriveTrainSubsystem;
+import frc.robot.subsystems.HoistSubsystem;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -22,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public DriveTrainSubsystem m_DriveTrainSubsystem = new DriveTrainSubsystem();
+  public HoistSubsystem m_HoistSubsystem = new HoistSubsystem();
 
   XboxController m_driverController = new XboxController(0);
 
@@ -50,6 +53,16 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    m_HoistSubsystem.setDefaultCommand(
+        new RunCommand(
+            () -> {
+              m_HoistSubsystem.setPercentageMotorOut(
+                  m_driverController.getRawAxis(2),
+                  m_driverController.getRawAxis(3));
+                  // 0.18);
+            }, m_HoistSubsystem));
+
   }
 
   // /**

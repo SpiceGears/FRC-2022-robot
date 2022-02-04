@@ -21,4 +21,8 @@ public class PortMap {
         public static final int RIGHT_ENCODER_A = 2;
         public static final int RIGHT_ENCODER_B = 3;
     }
+
+    public class Hoist {
+        public static final int RIGHT_MOTOR = 4;
+    }
 }
