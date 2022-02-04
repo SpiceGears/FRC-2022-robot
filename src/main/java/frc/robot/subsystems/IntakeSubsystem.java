@@ -11,8 +11,6 @@ import frc.robot.PortMap;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-    private PIDController pid = new PIDController(Constants.Intake.PID.KP, Constants.Intake.PID.KI, Constants.Intake.PID.KD);
-
     private VictorSP intakeMotor;
     private Encoder intakeEncoder;
     private DoubleSolenoid intakeSolenoid;
@@ -20,6 +18,7 @@ public class IntakeSubsystem extends SubsystemBase {
     boolean isIntakeOpen = false;
 
     public IntakeSubsystem() {
+
         configureMotors();
         configureEncoders();
         configureSolenoids();
@@ -73,10 +72,10 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void toggleIntake() {
-        if(intakeSolenoid.get() == Value.kForward) {
+        if(isIntakeOpen) {
             closeIntake();
         }
-        if(intakeSolenoid.get() == Value.kReverse) {
+        if(!isIntakeOpen) {
             openIntake();
         }
     }

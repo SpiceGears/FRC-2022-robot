@@ -48,12 +48,6 @@ public final class Constants {
 
     public static class Intake {
 
-        public static class PID {
-            public static final double KP = 0;
-            public static final double KI = 0;
-            public static final double KD = 0;
-        }
-
         // NOT CURRENT
         public static final double ROBOT_INTAKE_WHEEL_CIRCUIT = 100; // [mm]
         public static final double ENCODER_TICK_RATE = 256;
