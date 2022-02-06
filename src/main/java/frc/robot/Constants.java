@@ -47,8 +47,11 @@ public final class Constants {
     }
 
     public static class Intake {
+        
+        public static final long INTAKE_SOLENOID_DELAY = 500; // Delay between turning the intake solenoid off
 
-        // NOT CURRENT
+        public static final double INTAKE_MOTOR_OUTPUT = 0.5; // Intake motor output from 0 to 1
+        // NOT CURRENT V
         public static final double ROBOT_INTAKE_WHEEL_CIRCUIT = 100; // [mm]
         public static final double ENCODER_TICK_RATE = 256;
         public static final double ENCODER_MIN_RATE = 10; // Configures the encoder to consider itself stopped when it is bellow min rate

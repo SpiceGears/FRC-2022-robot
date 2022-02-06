@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class ToggleIntake extends CommandBase {
-  /** Creates a new DriveTrainCommand. */
+  // Creates a new DriveTrainCommand
   IntakeSubsystem intake;
   public void toggleIntake(IntakeSubsystem intake) {
     addRequirements(intake);

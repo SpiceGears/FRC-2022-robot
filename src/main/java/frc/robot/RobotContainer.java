@@ -5,9 +5,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.Intake.SetIntakeOutput;
 import frc.robot.commands.Intake.ToggleIntake;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -57,8 +59,10 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     final JoystickButton button_a = new JoystickButton(m_driverController, 1);
+    final JoystickButton button_b = new JoystickButton(m_driverController, 2);
 
     button_a.whenPressed(new ToggleIntake());
+    button_b.whenPressed(new SetIntakeOutput());
   }
 
   // /**
