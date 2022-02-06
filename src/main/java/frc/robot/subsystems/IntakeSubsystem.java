@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -14,6 +14,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private VictorSP intakeMotor;
     private Encoder intakeEncoder;
     private DoubleSolenoid intakeSolenoid;
+    private Compressor compressor;
 
     boolean isIntakeOpen = false;
 
