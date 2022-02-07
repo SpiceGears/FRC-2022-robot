@@ -40,9 +40,6 @@ public final class Constants {
             public static final double KS = 1.6892;
             public static final double KV = 2.8577;
             public static final double KA = 0.0109;
-            public static double ksVolts;
-            public static double kvVoltSecondsPerMeter;
-            public static double kaVoltSecondsSquaredPerMeter;
         }
 
         public static class AutoConstants {
