@@ -1,10 +1,15 @@
 package frc.robot.subsystems;
 
-import org.opencv.core.Mat;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,7 +22,15 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private Spark leftMasterMotor, leftMotorSlave;
 
     private Encoder leftEncoder, rightEncoder;
+    private AnalogGyro gyro = new AnalogGyro(PortMap.DriveTrain.GYRO);
 
+    // The motors on the left side of the drive.
+    private MotorControllerGroup m_leftMotors;
+
+    // The motors on the right side of the drive.
+    private MotorControllerGroup m_rightMotors;
+
+    private DifferentialDrive diffDrive;
     private PIDController lPIDMotorController = new PIDController(
             Constants.DriveTrain.PID.LEFT_KP,
             Constants.DriveTrain.PID.LEFT_KI,
@@ -31,6 +44,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
             Constants.DriveTrain.Feedforward.KS,
             Constants.DriveTrain.Feedforward.KV,
             Constants.DriveTrain.Feedforward.KA);
+
+    // Odometry class for tracking robot pose
+    private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(getHeading());
 
     public DriveTrainSubsystem() {
         configureMotors();
@@ -49,6 +65,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
         rightMasterMotor.setInverted(true);
         rightMotorSlave.setInverted(true);
 
+        m_leftMotors = new MotorControllerGroup(leftMasterMotor, leftMotorSlave);
+        m_rightMotors = new MotorControllerGroup(rightMasterMotor, rightMotorSlave);
+
+        diffDrive = new DifferentialDrive(m_leftMotors, m_rightMotors);
+
         configureEncoders();
     }
 
@@ -66,6 +87,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
         rightEncoder.setMaxPeriod(Constants.DriveTrain.ENCODER_MIN_RATE);
         rightEncoder.setReverseDirection(Constants.DriveTrain.ENCODER_RIGHT_REVERSE);
         rightEncoder.setSamplesToAverage(Constants.DriveTrain.ENCODER_SAMPLES_TO_AVERAGE);
+
+        resetEncoders();
     }
 
     public void setLeftPercentOutput(double output) {
@@ -230,18 +253,18 @@ public class DriveTrainSubsystem extends SubsystemBase {
         // + lPIDMotorController.calculate(getLeftEncoderRate(), leftSetpoint / 100);
         // double rightOut = feedforward.calculate(rightSetpoint)
         // + rPIDMotorController.calculate(getRightEncoderRate(), rightSetpoint / 100);
-        double leftOut = lPIDMotorController.calculate(getLeftEncoderRate(), leftSetpoint * 1000);
-        double rightOut = rPIDMotorController.calculate(getRightEncoderRate(), rightSetpoint * 1000);
+        double leftOut = lPIDMotorController.calculate(getLeftEncoderRate(),
+                leftSetpoint * 1000);
+        double rightOut = rPIDMotorController.calculate(getRightEncoderRate(),
+                rightSetpoint * 1000);
 
         // if (Math.abs(leftOut) < Constants.DriveTrain.MOTOR_MIN_VOLTAGE_OUT)
         // leftOut = 0;
         // if (Math.abs(rightOut) < Constants.DriveTrain.MOTOR_MIN_VOLTAGE_OUT)
         // rightOut = 0;
-        leftMasterMotor.setVoltage(leftOut * 12);
-        leftMotorSlave.setVoltage(leftOut * 12);
 
-        rightMasterMotor.setVoltage(rightOut * 12);
-        rightMotorSlave.setVoltage(rightOut * 12);
+        tankDriveVolts(leftOut * 12,
+                rightOut * 12);
 
         SmartDashboard.putNumber("getLeftEncoderRate()", -getLeftEncoderRate());
         SmartDashboard.putNumber("getRightEncoderRate()", getRightEncoderRate());
@@ -251,6 +274,18 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("Left driveFeedforwardPID", leftOut);
         SmartDashboard.putNumber("Right driveFeedforwardPID", rightOut);
+    }
+
+    /**
+     * Controls the left and right sides of the drive directly with voltages.
+     *
+     * @param leftVolts  the commanded left output
+     * @param rightVolts the commanded right output
+     */
+    public void tankDriveVolts(double leftVolts, double rightVolts) {
+        m_leftMotors.setVoltage(leftVolts);
+        m_rightMotors.setVoltage(rightVolts);
+        diffDrive.feed();
     }
 
     /**
@@ -313,6 +348,70 @@ public class DriveTrainSubsystem extends SubsystemBase {
         rightEncoder.reset();
     }
 
+    public double getGyroAngle() {
+        return gyro.getAngle();
+    }
+
+    public Rotation2d getGyroRotation2D() {
+        return gyro.getRotation2d();
+    }
+
+    /**
+     * Returns the currently-estimated pose of the robot.
+     *
+     * @return The pose.
+     */
+    public Pose2d getPose() {
+        return m_odometry.getPoseMeters();
+    }
+
+    /**
+     * Resets the odometry to the specified pose.
+     *
+     * @param pose The pose to which to set the odometry.
+     */
+    public void resetOdometry(Pose2d pose) {
+        resetEncoders();
+        m_odometry.resetPosition(pose, getHeading());
+    }
+
+    /**
+     * Returns the heading of the robot.
+     *
+     * @return the robot's heading in degrees, from -180 to 180
+     */
+    public Rotation2d getHeading() {
+        return Rotation2d.fromDegrees(gyro.getAngle() * -1);
+    }
+
+    /** Zeroes the heading of the robot. */
+    public void zeroHeading() {
+        gyro.reset();
+    }
+
+    public void updateOdometry() {
+        m_odometry.update(
+                getHeading(), getLeftEncoderDistance(), getRightEncoderDistance());
+    }
+
+    /**
+     * Returns the current wheel speeds of the robot.
+     *
+     * @return The current wheel speeds.
+     */
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(getLeftEncoderRate(), getRightEncoderRate());
+    }
+
+    /**
+     * Returns the turn rate of the robot.
+     *
+     * @return The turn rate of the robot, in degrees per second
+     */
+    public double getTurnRate() {
+        return gyro.getRate();
+    }
+
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("Left encoder rate", getLeftEncoderRate());
         SmartDashboard.putNumber("Right encoder rate", getRightEncoderRate());
@@ -320,5 +419,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Right encoder distance", getRightEncoderDistance());
         SmartDashboard.putNumber("Left encoder speed", getLeftEncoderSpeed());
         SmartDashboard.putNumber("Right encoder speed", getRightEncoderSpeed());
+        SmartDashboard.putNumber("Gyro angle", getGyroAngle());
     }
 }
