@@ -27,11 +27,11 @@ public final class Constants {
     public static class DriveTrain {
 
         public static class PID {
-            public static final double LEFT_KP = 8.6612E-05;
+            public static final double LEFT_KP = 0.00018612;
             public static final double LEFT_KI = 0;
             public static final double LEFT_KD = 0;
 
-            public static final double RIGHT_KP = 8.5977E-05;
+            public static final double RIGHT_KP = 0.00018475;
             public static final double RIGHT_KI = LEFT_KI;
             public static final double RIGHT_KD = LEFT_KD;
         }

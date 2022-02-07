@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import org.opencv.core.Mat;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,33 +22,42 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private Spark leftMasterMotor, leftMotorSlave;
 
     private Encoder leftEncoder, rightEncoder;
-    private AnalogGyro gyro = new AnalogGyro(PortMap.DriveTrain.GYRO);
+    private AnalogGyro gyro;
 
     // The motors on the left side of the drive.
-    private MotorControllerGroup m_leftMotors;
+    private MotorControllerGroup leftMotors;
 
     // The motors on the right side of the drive.
-    private MotorControllerGroup m_rightMotors;
+    private MotorControllerGroup rightMotors;
 
     private DifferentialDrive diffDrive;
-    private PIDController lPIDMotorController = new PIDController(
-            Constants.DriveTrain.PID.LEFT_KP,
-            Constants.DriveTrain.PID.LEFT_KI,
-            Constants.DriveTrain.PID.LEFT_KD);
-    private PIDController rPIDMotorController = new PIDController(
-            Constants.DriveTrain.PID.RIGHT_KP,
-            Constants.DriveTrain.PID.RIGHT_KI,
-            Constants.DriveTrain.PID.RIGHT_KD);
+    private PIDController lPIDMotorController;
+    private PIDController rPIDMotorController;
 
-    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(
-            Constants.DriveTrain.Feedforward.KS,
-            Constants.DriveTrain.Feedforward.KV,
-            Constants.DriveTrain.Feedforward.KA);
+    private SimpleMotorFeedforward feedforward;
 
     // Odometry class for tracking robot pose
-    private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(getHeading());
+    private DifferentialDriveOdometry m_odometry;
 
     public DriveTrainSubsystem() {
+        gyro = new AnalogGyro(PortMap.DriveTrain.GYRO);
+
+        lPIDMotorController = new PIDController(
+                Constants.DriveTrain.PID.LEFT_KP,
+                Constants.DriveTrain.PID.LEFT_KI,
+                Constants.DriveTrain.PID.LEFT_KD);
+        rPIDMotorController = new PIDController(
+                Constants.DriveTrain.PID.RIGHT_KP,
+                Constants.DriveTrain.PID.RIGHT_KI,
+                Constants.DriveTrain.PID.RIGHT_KD);
+
+        feedforward = new SimpleMotorFeedforward(
+                Constants.DriveTrain.Feedforward.KS,
+                Constants.DriveTrain.Feedforward.KV,
+                Constants.DriveTrain.Feedforward.KA);
+
+        m_odometry = new DifferentialDriveOdometry(getHeading());
+
         configureMotors();
     }
 
@@ -67,10 +74,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
         rightMasterMotor.setInverted(true);
         rightMotorSlave.setInverted(true);
 
-        m_leftMotors = new MotorControllerGroup(leftMasterMotor, leftMotorSlave);
-        m_rightMotors = new MotorControllerGroup(rightMasterMotor, rightMotorSlave);
+        leftMotors = new MotorControllerGroup(leftMasterMotor, leftMotorSlave);
+        rightMotors = new MotorControllerGroup(rightMasterMotor, rightMotorSlave);
 
-        diffDrive = new DifferentialDrive(m_leftMotors, m_rightMotors);
+        diffDrive = new DifferentialDrive(leftMotors, rightMotors);
 
         configureEncoders();
     }
@@ -93,20 +100,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
         resetEncoders();
     }
 
-    public void setLeftPercentOutput(double output) {
-        leftMasterMotor.set(output);
-        leftMotorSlave.set(output);
-
-        SmartDashboard.putNumber("Left motor out", output);
-    }
-
-    public void setRightPercentOutput(double output) {
-        rightMasterMotor.set(output);
-        rightMotorSlave.set(output);
-
-        SmartDashboard.putNumber("Right motor out", output);
-    }
-
     public void setRawMotorPercentageOutput(double leftOut, double rightOut, double turn) {
         if (Math.abs(leftOut) < Constants.DriveTrain.MOTOR_MIN_PERCENTAGE_OUT)
             leftOut = 0;
@@ -114,8 +107,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
             rightOut = 0;
         if (Math.abs(turn) < Constants.DriveTrain.MOTOR_MIN_PERCENTAGE_OUT)
             turn = 0;
-        setLeftPercentOutput(leftOut - turn);
-        setRightPercentOutput(rightOut + turn);
+        leftMotors.set(leftOut - turn);
+        rightMotors.set(rightOut + turn);
     }
 
     /**
@@ -265,8 +258,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         // if (Math.abs(rightOut) < Constants.DriveTrain.MOTOR_MIN_VOLTAGE_OUT)
         // rightOut = 0;
 
-        tankDriveVolts(leftOut * 12,
-                rightOut * 12);
+        tankDriveVolts(leftOut * 12, rightOut * 12);
 
         SmartDashboard.putNumber("getLeftEncoderRate()", -getLeftEncoderRate());
         SmartDashboard.putNumber("getRightEncoderRate()", getRightEncoderRate());
@@ -285,8 +277,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @param rightVolts the commanded right output
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-        m_leftMotors.setVoltage(leftVolts);
-        m_rightMotors.setVoltage(rightVolts);
+        leftMotors.setVoltage(leftVolts);
+        rightMotors.setVoltage(rightVolts);
         diffDrive.feed();
     }
 
@@ -383,7 +375,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @return the robot's heading in degrees, from -180 to 180
      */
     public Rotation2d getHeading() {
-        return Rotation2d.fromDegrees(gyro.getAngle() * -1);
+        return Rotation2d.fromDegrees(-gyro.getAngle());
     }
 
     /** Zeroes the heading of the robot. */
