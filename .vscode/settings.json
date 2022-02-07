@@ -30,6 +30,7 @@
     "Feedforward",
     "odometry",
     "ramsete",
-    "teleop"
+    "teleop",
+    "teleoperated"
   ]
 }
