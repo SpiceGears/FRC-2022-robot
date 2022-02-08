@@ -34,6 +34,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     m_robotContainer.m_DriveTrainSubsystem.resetEncoders();
+    m_robotContainer.m_DriveTrainSubsystem.calibrateGyro();
   }
 
   /**
@@ -78,6 +79,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    m_robotContainer.m_DriveTrainSubsystem.resetGyro();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)

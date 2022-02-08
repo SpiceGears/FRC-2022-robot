@@ -6,8 +6,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.ADIS16448_IMU;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
@@ -22,7 +26,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private Spark leftMasterMotor, leftMotorSlave;
 
     private Encoder leftEncoder, rightEncoder;
-    private AnalogGyro gyro;
+    private ADXRS450_Gyro gyro;
 
     // The motors on the left side of the drive.
     private MotorControllerGroup leftMotors;
@@ -40,7 +44,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private DifferentialDriveOdometry m_odometry;
 
     public DriveTrainSubsystem() {
-        gyro = new AnalogGyro(PortMap.DriveTrain.GYRO);
+        gyro = new ADXRS450_Gyro();
 
         lPIDMotorController = new PIDController(
                 Constants.DriveTrain.PID.LEFT_KP,
@@ -346,9 +350,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
         return gyro.getAngle();
     }
 
-    public Rotation2d getGyroRotation2D() {
-        return gyro.getRotation2d();
-    }
+    // public Rotation2d getGyroRotation2D() {
+    // return gyro.getRotation2d();
+    // }
 
     /**
      * Returns the currently-estimated pose of the robot.
@@ -375,7 +379,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @return the robot's heading in degrees, from -180 to 180
      */
     public Rotation2d getHeading() {
-        return Rotation2d.fromDegrees(-gyro.getAngle());
+        return Rotation2d.fromDegrees(-getGyroAngle());
     }
 
     /** Zeroes the heading of the robot. */
@@ -385,7 +389,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
     public void updateOdometry() {
         m_odometry.update(
-                getHeading(), getLeftEncoderDistance(), getRightEncoderDistance());
+                getHeading(), getLeftEncoderDistance() * 0.001, getRightEncoderDistance() * 0.001);
     }
 
     /**
@@ -395,6 +399,14 @@ public class DriveTrainSubsystem extends SubsystemBase {
      */
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         return new DifferentialDriveWheelSpeeds(getLeftEncoderRate(), getRightEncoderRate());
+    }
+
+    public void resetGyro() {
+        gyro.reset();
+    }
+
+    public void calibrateGyro() {
+        gyro.calibrate();
     }
 
     /**
@@ -414,5 +426,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Left encoder speed", getLeftEncoderSpeed());
         SmartDashboard.putNumber("Right encoder speed", getRightEncoderSpeed());
         SmartDashboard.putNumber("Gyro angle", getGyroAngle());
+        SmartDashboard.putNumber("Gyro rate", gyro.getRate());
+        SmartDashboard.putNumber("Gyro getHeading", getHeading().getDegrees());
+        SmartDashboard.putNumber("Gyro getHeading", getHeading().getRadians());
     }
 }
