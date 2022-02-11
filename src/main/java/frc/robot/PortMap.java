@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.DigitalSource;
 /** Add your docs here. */
 public class PortMap {
 
+    public static final int FREE_VICTOR_SP = 4;
+
     public static class DriveTrain {
         public static final int FRONT_LEFT_MOTOR = 3;
         public static final int BACK_LEFT_MOTOR = 2;
@@ -23,6 +25,7 @@ public class PortMap {
     }
 
     public class Hoist {
-        public static final int RIGHT_MOTOR = 4;
+        public static final int RIGHT_MOTOR = 5;
+        public static final int LEFT_MOTOR = 6;
     }
 }

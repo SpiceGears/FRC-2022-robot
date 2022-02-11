@@ -4,24 +4,30 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.PortMap;
 
 public class HoistSubsystem extends SubsystemBase {
   /** Creates a new Hoist. */
 
-  private VictorSP rightMotor;
+  private VictorSP rightMotor, leftMotor;
+  private MotorControllerGroup hoistMotors;
 
   public HoistSubsystem() {
     rightMotor = new VictorSP(PortMap.Hoist.RIGHT_MOTOR);
+    leftMotor = new VictorSP(PortMap.Hoist.LEFT_MOTOR);
 
     configureMotors();
   }
 
   private void configureMotors() {
     rightMotor.setInverted(false);
+    leftMotor.setInverted(false);
+
+    hoistMotors = new MotorControllerGroup(rightMotor, leftMotor);
   }
 
   @Override
@@ -29,8 +35,12 @@ public class HoistSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void setPercentageMotorOut(double lOut, double rOut) {
-    rightMotor.set(rOut);
+  public void setPercentageMotorOut(double out, double back) {
+    hoistMotors.set(out - back);
+  }
+
+  public void updateSmartDashboard() {
+    SmartDashboard.putNumber("Hoist percentage out", hoistMotors.get());
   }
 
 }

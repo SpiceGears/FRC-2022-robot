@@ -22,61 +22,62 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  public DriveTrainSubsystem m_DriveTrainSubsystem = new DriveTrainSubsystem();
-  public HoistSubsystem m_HoistSubsystem = new HoistSubsystem();
+        // The robot's subsystems and commands are defined here...
+        public DriveTrainSubsystem m_DriveTrainSubsystem = new DriveTrainSubsystem();
+        public HoistSubsystem m_HoistSubsystem = new HoistSubsystem();
 
-  XboxController m_driverController = new XboxController(0);
+        XboxController m_driverController = new XboxController(0);
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  public RobotContainer() {
-    // Configure the button bindings
-    configureButtonBindings();
+        /**
+         * The container for the robot. Contains subsystems, OI devices, and commands.
+         */
+        public RobotContainer() {
+                // Configure the button bindings
+                configureButtonBindings();
 
-    m_DriveTrainSubsystem.setDefaultCommand(
-        new RunCommand(
-            () -> {
-              m_DriveTrainSubsystem.joystickDriveTrain(
-                  m_driverController.getRawAxis(1),
-                  m_driverController.getRawAxis(4) * Constants.Joystick.JOYSTICK_TURN_AXIS_MULTIPLIER);
-            }, m_DriveTrainSubsystem));
-  }
+                m_DriveTrainSubsystem.setDefaultCommand(
+                                new RunCommand(
+                                                () -> {
+                                                        m_DriveTrainSubsystem.joystickDriveTrain(
+                                                                        m_driverController.getRawAxis(1),
+                                                                        m_driverController.getRawAxis(4)
+                                                                                        * Constants.Joystick.JOYSTICK_TURN_AXIS_MULTIPLIER);
+                                                }, m_DriveTrainSubsystem));
+        }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-   * it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
+        /**
+         * Use this method to define your button->command mappings. Buttons can be
+         * created by
+         * instantiating a {@link GenericHID} or one of its subclasses ({@link
+         * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+         * it to a {@link
+         * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+         */
+        private void configureButtonBindings() {
 
-    m_HoistSubsystem.setDefaultCommand(
-        new RunCommand(
-            () -> {
-              m_HoistSubsystem.setPercentageMotorOut(
-                  m_driverController.getRawAxis(2),
-                  m_driverController.getRawAxis(3));
-                  // 0.18);
-            }, m_HoistSubsystem));
+                m_HoistSubsystem.setDefaultCommand(
+                                new RunCommand(
+                                                () -> {
+                                                        m_HoistSubsystem.setPercentageMotorOut(
+                                                                        m_driverController.getRawAxis(2),
+                                                                        m_driverController.getRawAxis(3));
+                                                }, m_HoistSubsystem));
 
-  }
+        }
 
-  // /**
-  // * Use this to pass the autonomous command to the main {@link Robot} class.
-  // *
-  // * @return the command to run in autonomous
-  // */
-  // public Command getAutonomousCommand() {
-  // // An ExampleCommand will run in autonomous
-  // return m_autoCommand;
-  // }
+        // /**
+        // * Use this to pass the autonomous command to the main {@link Robot} class.
+        // *
+        // * @return the command to run in autonomous
+        // */
+        // public Command getAutonomousCommand() {
+        // // An ExampleCommand will run in autonomous
+        // return m_autoCommand;
+        // }
 
-  public void updateSmartDashboard() {
-    m_DriveTrainSubsystem.updateSmartDashboard();
-    SmartDashboard.putNumber("joistick x", m_driverController.getRawAxis(1));
-  }
+        public void updateSmartDashboard() {
+                m_DriveTrainSubsystem.updateSmartDashboard();
+                m_HoistSubsystem.updateSmartDashboard();
+                SmartDashboard.putNumber("joistick x", m_driverController.getRawAxis(1));
+        }
 }
