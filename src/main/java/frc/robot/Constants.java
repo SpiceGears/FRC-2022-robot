@@ -21,8 +21,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 public final class Constants {
 
     public static class Camera {
-        public static final int WIDTH = 800;
-        public static final int HEIGHT = 600;
+        public static final int WIDTH = 640;
+        public static final int HEIGHT = 480;
     }
 
     public static class Joystick {

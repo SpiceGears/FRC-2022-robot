@@ -6,12 +6,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.ADIS16448_IMU;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
@@ -75,8 +71,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
         leftMasterMotor.setInverted(true);
         leftMotorSlave.setInverted(true);
 
-        rightMasterMotor.setInverted(true);
-        rightMotorSlave.setInverted(true);
+        rightMasterMotor.setInverted(false);
+        rightMotorSlave.setInverted(false);
 
         leftMotors = new MotorControllerGroup(leftMasterMotor, leftMotorSlave);
         rightMotors = new MotorControllerGroup(rightMasterMotor, rightMotorSlave);
