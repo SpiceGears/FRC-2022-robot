@@ -46,8 +46,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
         leftMasterMotor.setInverted(true);
         leftMotorSlave.setInverted(true);
 
-        rightMasterMotor.setInverted(true);
-        rightMotorSlave.setInverted(true);
+        rightMasterMotor.setInverted(false);
+        rightMotorSlave.setInverted(false);
 
         configureEncoders();
     }

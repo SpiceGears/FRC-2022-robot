@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,9 +18,14 @@ public class HoistSubsystem extends SubsystemBase {
   private VictorSP rightMotor, leftMotor;
   private MotorControllerGroup hoistMotors;
 
+  private Compressor compressor;
+
   public HoistSubsystem() {
     rightMotor = new VictorSP(PortMap.Hoist.RIGHT_MOTOR);
     leftMotor = new VictorSP(PortMap.Hoist.LEFT_MOTOR);
+
+    compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
+    compressor.enableDigital();
 
     configureMotors();
   }
