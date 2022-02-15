@@ -85,4 +85,24 @@ public final class Constants {
         public static final double MAX_ROBOT_SPEED = 10; // Max robot speed in teleoperated mode [m/s] (1m/s = 3,6km/h)
     }
 
+    public static class Intake {
+
+        public static final long INTAKE_SOLENOID_DELAY = 100; // Delay between turning the intake solenoid off
+
+        public static final double INTAKE_MOTOR_OUTPUT = 0.5; // Intake motor output from 0 to 1
+        // NOT CURRENT V
+        public static final double ROBOT_INTAKE_WHEEL_CIRCUIT = 100; // [mm]
+        public static final double ENCODER_TICK_RATE = 256;
+        public static final double ENCODER_MIN_RATE = 10; // Configures the encoder to consider itself stopped when it
+                                                          // is bellow min rate
+        public static final double ROBOT_DISTANCE_PER_ROTATION = ROBOT_INTAKE_WHEEL_CIRCUIT; // The distance the robot
+                                                                                             // will travel with one
+                                                                                             // revolution of the motor
+                                                                                             // [mm]
+
+        public static final int ENCODER_SAMPLES_TO_AVERAGE = 5; // Can be between 1 and 127
+
+        public static final boolean ENCODER_REVERSE = false;
+
+    }
 }

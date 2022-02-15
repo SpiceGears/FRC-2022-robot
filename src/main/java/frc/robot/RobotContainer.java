@@ -23,7 +23,11 @@ import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import frc.robot.commands.Intake.SetIntakeOutput;
+import frc.robot.commands.Intake.ToggleIntake;
+import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -38,6 +42,9 @@ public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         public DriveTrainSubsystem m_DriveTrainSubsystem = new DriveTrainSubsystem();
         public Camera cameraSubsystem = new Camera();
+        // private final DriveTrainSubsystem m_DriveTrainSubsystem = new
+        // DriveTrainSubsystem();
+        public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
 
         XboxController m_driverController = new XboxController(0);
 
@@ -66,6 +73,11 @@ public class RobotContainer {
          * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
          */
         private void configureButtonBindings() {
+                final JoystickButton button_a = new JoystickButton(m_driverController, 1);
+                final JoystickButton button_b = new JoystickButton(m_driverController, 2);
+
+                button_a.whileActiveOnce(new ToggleIntake(m_IntakeSubsystem));
+                button_b.whenPressed(new SetIntakeOutput(m_IntakeSubsystem));
         }
 
         /**
@@ -137,6 +149,7 @@ public class RobotContainer {
 
         public void updateSmartDashboard() {
                 m_DriveTrainSubsystem.updateSmartDashboard();
+                m_IntakeSubsystem.updateSmartDashboard();
                 SmartDashboard.putNumber("joystick x", m_driverController.getRawAxis(1));
         }
 }
