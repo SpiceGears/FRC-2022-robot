@@ -26,17 +26,18 @@ public final class Constants {
     }
 
     public static class Joystick {
-        public static final double JOYSTICK_TURN_AXIS_MULTIPLIER = 0.2;
+        public static final double JOYSTICK_TURN_AXIS_MULTIPLIER = 0.6;
     }
 
     public static class DriveTrain {
 
         public static class PID {
-            public static final double LEFT_KP = 0.00008612;
+            // public static final double LEFT_KP = 0.00008612;
+            public static final double LEFT_KP = 0.000033905 * 2;
             public static final double LEFT_KI = 0;
             public static final double LEFT_KD = 0;
 
-            public static final double RIGHT_KP = 0.00008475;
+            public static final double RIGHT_KP = 0.000034502 * 2;
             public static final double RIGHT_KI = LEFT_KI;
             public static final double RIGHT_KD = LEFT_KD;
         }

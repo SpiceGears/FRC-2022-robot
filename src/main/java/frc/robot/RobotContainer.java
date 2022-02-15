@@ -52,7 +52,7 @@ public class RobotContainer {
                                 new RunCommand(() -> {
                                         m_DriveTrainSubsystem.joystickDriveTrain(
                                                         m_driverController.getRawAxis(1),
-                                                        m_driverController.getRawAxis(4)
+                                                        -m_driverController.getRawAxis(4)
                                                                         * Constants.Joystick.JOYSTICK_TURN_AXIS_MULTIPLIER);
                                 }, m_DriveTrainSubsystem));
         }

@@ -6,9 +6,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.ADXL362;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +28,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
     private Encoder leftEncoder, rightEncoder;
     private ADXRS450_Gyro gyro;
+    // private Accelerometer accelerometer;
 
     // The motors on the left side of the drive.
     private MotorControllerGroup leftMotors;
@@ -40,7 +46,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private DifferentialDriveOdometry m_odometry;
 
     public DriveTrainSubsystem() {
-        gyro = new ADXRS450_Gyro();
+        gyro = new ADXRS450_Gyro(Port.kMXP);
+        // accelerometer = new ADXL362(Port.kMXP, Accelerometer.Range.k8G);
+        // accelerometer = new ADXL362(Port.kMXP, Accelerometer.Range.k8G);
+
+        gyro.calibrate();
 
         lPIDMotorController = new PIDController(
                 Constants.DriveTrain.PID.LEFT_KP,
@@ -129,104 +139,107 @@ public class DriveTrainSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("In speedInput", speedInput);
         SmartDashboard.putNumber("In turnInput", turnInput);
 
-        // no turn
-        if (turnInput == 0) {
-            lOutput = speedInput;
-            rOutput = speedInput;
-        } else {
+        // // no turn
+        // if (turnInput == 0) {
+        // lOutput = speedInput;
+        // rOutput = speedInput;
+        // } else {
 
-            if (Math.abs(speedInput) <= 0.4) {
-                lOutput = speedInput - turnInput;
-                rOutput = speedInput + turnInput;
-            }
-            // Turn and speed added are less or equal than 100%
-            else if (Math.abs(speedInput) + Math.abs(turnInput) <= 1
-                    && Math.abs(speedInput) + Math.abs(turnInput) != 0) {
-                // Ride foreword
-                if (speedInput > 0) {
-                    // turning right
-                    if (turnInput > 0) {
-                        lOutput = speedInput + turnInput;
-                        rOutput = speedInput;
-                    }
-                    // turning left
-                    else if (turnInput < 0) {
-                        lOutput = speedInput;
-                        rOutput = speedInput - turnInput;
-                    }
-                } else {
-                    // turning right
-                    if (turnInput > 0) {
-                        lOutput = speedInput - turnInput;
-                        rOutput = speedInput;
-                    }
-                    // turning left
-                    else if (turnInput < 0) {
-                        lOutput = speedInput;
-                        rOutput = speedInput + turnInput;
-                    }
-                }
-            }
-            // Turn and speed added are greater than 100%
-            else if (Math.abs(speedInput) + Math.abs(turnInput) > 1
-                    && Math.abs(speedInput) + Math.abs(turnInput) != 0) {
-                if (Math.abs(speedInput) >= 1) {
-                    // Ride foreword
-                    if (speedInput > 0) {
-                        // turning right
-                        if (turnInput > 0) {
-                            lOutput = speedInput;
-                            rOutput = speedInput - turnInput;
-                        }
-                        // turning left
-                        else if (turnInput < 0) {
-                            lOutput = speedInput + turnInput;
-                            rOutput = speedInput;
-                        }
-                    }
-                    // Ride backward
-                    else {
-                        // turning right
-                        if (turnInput > 0) {
-                            lOutput = speedInput;
-                            rOutput = speedInput + turnInput;
-                        }
-                        // turning left
-                        else if (turnInput < 0) {
-                            lOutput = speedInput - turnInput;
-                            rOutput = speedInput;
-                        }
-                    }
-                } else {
-                    // Ride foreword
-                    if (speedInput > 0) {
-                        // turning right
-                        if (turnInput > 0) {
-                            lOutput = 1;
-                            rOutput = speedInput - (speedInput + turnInput - 1);
-                        }
-                        // turning left
-                        else if (turnInput < 0) {
-                            lOutput = speedInput - (speedInput - turnInput - 1);
-                            rOutput = 1;
-                        }
-                    }
-                    // Ride backward
-                    else {
-                        // turning right
-                        if (turnInput > 0) {
-                            lOutput = -1;
-                            rOutput = -speedInput + (speedInput + turnInput - 1);
-                        }
-                        // turning left
-                        else if (turnInput < 0) {
-                            lOutput = -speedInput + (speedInput - turnInput - 1);
-                            rOutput = -1;
-                        }
-                    }
-                }
-            }
-        }
+        // if (Math.abs(speedInput) <= 0.4) {
+        // lOutput = speedInput - turnInput;
+        // rOutput = speedInput + turnInput;
+        // }
+        // // Turn and speed added are less or equal than 100%
+        // else if (Math.abs(speedInput) + Math.abs(turnInput) <= 1
+        // && Math.abs(speedInput) + Math.abs(turnInput) != 0) {
+        // // Ride foreword
+        // if (speedInput > 0) {
+        // // turning right
+        // if (turnInput > 0) {
+        // lOutput = speedInput + turnInput;
+        // rOutput = speedInput;
+        // }
+        // // turning left
+        // else if (turnInput < 0) {
+        // lOutput = speedInput;
+        // rOutput = speedInput - turnInput;
+        // }
+        // } else {
+        // // turning right
+        // if (turnInput > 0) {
+        // lOutput = speedInput - turnInput;
+        // rOutput = speedInput;
+        // }
+        // // turning left
+        // else if (turnInput < 0) {
+        // lOutput = speedInput;
+        // rOutput = speedInput + turnInput;
+        // }
+        // }
+        // }
+        // // Turn and speed added are greater than 100%
+        // else if (Math.abs(speedInput) + Math.abs(turnInput) > 1
+        // && Math.abs(speedInput) + Math.abs(turnInput) != 0) {
+        // if (Math.abs(speedInput) >= 1) {
+        // // Ride foreword
+        // if (speedInput > 0) {
+        // // turning right
+        // if (turnInput > 0) {
+        // lOutput = speedInput;
+        // rOutput = speedInput - turnInput;
+        // }
+        // // turning left
+        // else if (turnInput < 0) {
+        // lOutput = speedInput + turnInput;
+        // rOutput = speedInput;
+        // }
+        // }
+        // // Ride backward
+        // else {
+        // // turning right
+        // if (turnInput > 0) {
+        // lOutput = speedInput;
+        // rOutput = speedInput + turnInput;
+        // }
+        // // turning left
+        // else if (turnInput < 0) {
+        // lOutput = speedInput - turnInput;
+        // rOutput = speedInput;
+        // }
+        // }
+        // } else {
+        // // Ride foreword
+        // if (speedInput > 0) {
+        // // turning right
+        // if (turnInput > 0) {
+        // lOutput = 1;
+        // rOutput = speedInput - (speedInput + turnInput - 1);
+        // }
+        // // turning left
+        // else if (turnInput < 0) {
+        // lOutput = speedInput - (speedInput - turnInput - 1);
+        // rOutput = 1;
+        // }
+        // }
+        // // Ride backward
+        // else {
+        // // turning right
+        // if (turnInput > 0) {
+        // lOutput = -1;
+        // rOutput = -speedInput + (speedInput + turnInput - 1);
+        // }
+        // // turning left
+        // else if (turnInput < 0) {
+        // lOutput = -speedInput + (speedInput - turnInput - 1);
+        // rOutput = -1;
+        // }
+        // }
+        // }
+        // }
+        // }
+
+        lOutput = speedInput + turnInput;
+        rOutput = speedInput - turnInput;
 
         lOutput *= Constants.DriveTrain.MAX_ROBOT_SPEED;
         rOutput *= Constants.DriveTrain.MAX_ROBOT_SPEED;
@@ -423,6 +436,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Right encoder speed", getRightEncoderSpeed());
         SmartDashboard.putNumber("Gyro angle", getGyroAngle());
         SmartDashboard.putNumber("Gyro rate", gyro.getRate());
+        SmartDashboard.putBoolean("Gyro", gyro.isConnected());
         SmartDashboard.putNumber("Gyro getHeading", getHeading().getDegrees());
         SmartDashboard.putNumber("Gyro getHeading", getHeading().getRadians());
     }
