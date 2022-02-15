@@ -60,7 +60,13 @@ public final class Constants {
 
         }
 
-        private static double kTrackWidthMeters = 0.5900;
+        public static final boolean IS_LEFT_MASTER_INVERTED = true;
+        public static final boolean IS_LEFT_SLAVE_INVERTED = IS_LEFT_MASTER_INVERTED;
+
+        public static final boolean IS_RIGHT_MASTER_INVERTED = false;
+        public static final boolean IS_RIGHT_SLAVE_INVERTED = IS_RIGHT_MASTER_INVERTED;
+
+        private static final double kTrackWidthMeters = 0.5900;
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
                 kTrackWidthMeters);
 

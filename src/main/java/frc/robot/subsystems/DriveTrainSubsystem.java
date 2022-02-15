@@ -6,14 +6,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.ADXL362;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -78,11 +74,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
         leftMasterMotor = new Spark(PortMap.DriveTrain.FRONT_LEFT_MOTOR);
         leftMotorSlave = new Spark(PortMap.DriveTrain.BACK_LEFT_MOTOR);
 
-        leftMasterMotor.setInverted(true);
-        leftMotorSlave.setInverted(true);
+        leftMasterMotor.setInverted(Constants.DriveTrain.IS_LEFT_MASTER_INVERTED);
+        leftMotorSlave.setInverted(Constants.DriveTrain.IS_LEFT_SLAVE_INVERTED);
 
-        rightMasterMotor.setInverted(false);
-        rightMotorSlave.setInverted(false);
+        rightMasterMotor.setInverted(Constants.DriveTrain.IS_RIGHT_MASTER_INVERTED);
+        rightMotorSlave.setInverted(Constants.DriveTrain.IS_RIGHT_SLAVE_INVERTED);
 
         leftMotors = new MotorControllerGroup(leftMasterMotor, leftMotorSlave);
         rightMotors = new MotorControllerGroup(rightMasterMotor, rightMotorSlave);

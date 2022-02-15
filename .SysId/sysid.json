@@ -1,7 +1,7 @@
 {
   "SysId": {
     "Analysis Type": "General Mechanism",
-    "AnalyzerJSONLocation": "D:\\Programowanie\\FRC-2022-robot\\sysid_data20220207-141856.json",
+    "AnalyzerJSONLocation": "D:\\Programowanie\\FRC-2022-robot\\.SysId\\generated files\\sysid_data20220207-140803.json",
     "NetworkTables Settings": {
       "serverTeam": "5883"
     },
