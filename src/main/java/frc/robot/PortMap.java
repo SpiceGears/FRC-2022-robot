@@ -25,9 +25,5 @@ public class PortMap {
 
         // NOT CURRENT VALUES
         public static final int INTAKE_MOTOR = 4;
-
-        public static final DigitalSource INTAKE_ENCODER = null;
-        public static final DigitalSource ENCODER_A = null;
-        public static final DigitalSource ENCODER_B = null;
     }
 }
