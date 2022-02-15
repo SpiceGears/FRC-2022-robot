@@ -24,7 +24,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
     private Encoder leftEncoder, rightEncoder;
     private ADXRS450_Gyro gyro;
-    // private Accelerometer accelerometer;
 
     // The motors on the left side of the drive.
     private MotorControllerGroup leftMotors;
@@ -43,8 +42,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
     public DriveTrainSubsystem() {
         gyro = new ADXRS450_Gyro(Port.kMXP);
-        // accelerometer = new ADXL362(Port.kMXP, Accelerometer.Range.k8G);
-        // accelerometer = new ADXL362(Port.kMXP, Accelerometer.Range.k8G);
 
         gyro.calibrate();
 
