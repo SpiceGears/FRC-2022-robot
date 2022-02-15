@@ -17,7 +17,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private Encoder leftEncoder, rightEncoder;
 
     public DriveTrainSubsystem() {
-        configureMotors();
+        // configureMotors();
     }
 
     private void configureMotors() {
