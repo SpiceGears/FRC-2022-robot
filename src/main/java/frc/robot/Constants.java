@@ -48,7 +48,7 @@ public final class Constants {
 
     public static class Intake {
 
-        public static final long INTAKE_SOLENOID_DELAY = 25; // Delay between turning the intake solenoid off
+        public static final long INTAKE_SOLENOID_DELAY = 100; // Delay between turning the intake solenoid off
 
         public static final double INTAKE_MOTOR_OUTPUT = 0.5; // Intake motor output from 0 to 1
         // NOT CURRENT V
