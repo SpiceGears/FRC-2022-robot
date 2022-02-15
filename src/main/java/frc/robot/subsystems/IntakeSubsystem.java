@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.PortMap;
 
@@ -104,5 +105,6 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void updateSmartDashboard() {
+        SmartDashboard.putNumber("intakeoutput", intakeMotor.get());
     }
 }

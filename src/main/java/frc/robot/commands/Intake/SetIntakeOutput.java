@@ -20,12 +20,12 @@ public class SetIntakeOutput extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.setIntakeOutput(Constants.Intake.INTAKE_MOTOR_OUTPUT);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    intake.setIntakeOutput(Constants.Intake.INTAKE_MOTOR_OUTPUT);
   }
 
   // Called once the command ends or is interrupted.

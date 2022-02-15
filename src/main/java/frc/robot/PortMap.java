@@ -22,11 +22,11 @@ public class PortMap {
         public static final DigitalSource RIGHT_ENCODER_B = null;
     }
 
-    public static class Intake { 
+    public static class Intake {
 
         // NOT CURRENT VALUES
-        public static final int INTAKE_MOTOR = 0;
-        
+        public static final int INTAKE_MOTOR = 4;
+
         public static final DigitalSource INTAKE_ENCODER = null;
         public static final DigitalSource ENCODER_A = null;
         public static final DigitalSource ENCODER_B = null;

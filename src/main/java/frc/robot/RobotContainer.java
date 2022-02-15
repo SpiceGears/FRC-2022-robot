@@ -79,6 +79,7 @@ public class RobotContainer {
 
         public void updateSmartDashboard() {
                 // m_DriveTrainSubsystem.updateSmartDashboard();
+                m_IntakeSubsystem.updateSmartDashboard();
                 SmartDashboard.putNumber("joistick x", m_driverController.getRawAxis(1));
         }
 }
