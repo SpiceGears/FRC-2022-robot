@@ -289,7 +289,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
 
     /**
-     * Function returns distance that left wheels of the robot h aas traveled.
+     * Function returns distance that left wheels of the robot has traveled.
      * 
      * @return The distance traveled in mm.
      */
