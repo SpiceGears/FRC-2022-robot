@@ -48,7 +48,6 @@ public class IntakeSubsystem extends SubsystemBase {
      */
 
     private void configureSolenoids() {
-
         intakeSolenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 1, 0); // NOT CURRENT
         intakeSolenoid.set(Value.kOff);
     }

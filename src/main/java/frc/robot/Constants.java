@@ -23,6 +23,7 @@ public final class Constants {
     public static class Camera {
         public static final int WIDTH = 640;
         public static final int HEIGHT = 480;
+        public static final int FPS = 12;
     }
 
     public static class Joystick {

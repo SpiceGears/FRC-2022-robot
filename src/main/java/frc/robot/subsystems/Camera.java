@@ -12,6 +12,8 @@ import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode;
+import edu.wpi.first.cscore.VideoProperty;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -22,12 +24,16 @@ public class Camera extends SubsystemBase {
     new Thread(() -> {
       UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
       camera.setResolution(Constants.Camera.WIDTH, Constants.Camera.HEIGHT);
+      camera.setFPS(Constants.Camera.FPS);
 
       MjpegServer server = CameraServer.getInstance().addServer("cameraStream");
 
       CvSink cvSink = CameraServer.getInstance().getVideo();
+
       CvSource outputStream = CameraServer.getInstance().putVideo("Camera", Constants.Camera.WIDTH,
           Constants.Camera.HEIGHT);
+
+      outputStream.setFPS(Constants.Camera.FPS);
 
       Mat source = new Mat();
       Mat output = new Mat();
@@ -37,7 +43,6 @@ public class Camera extends SubsystemBase {
           outputStream.notifyError(cvSink.getError());
           continue;
         }
-        Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
         outputStream.putFrame(output);
       }
 

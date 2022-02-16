@@ -77,7 +77,7 @@ public class RobotContainer {
                 final JoystickButton button_b = new JoystickButton(m_driverController, 2);
 
                 button_a.whileActiveOnce(new ToggleIntake(m_IntakeSubsystem));
-                button_b.whenPressed(new SetIntakeOutput(m_IntakeSubsystem));
+                button_b.whileActiveContinuous(new SetIntakeOutput(m_IntakeSubsystem));
 
                 m_HoistSubsystem.setDefaultCommand(
                                 new RunCommand(
