@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DigitalSource;
-
 /** Add your docs here. */
 public class PortMap {
 
@@ -16,19 +14,19 @@ public class PortMap {
         public static final int FRONT_RIGHT_MOTOR = 1;
         public static final int BACK_RIGHT_MOTOR = 0;
 
-        public static final DigitalSource LEFT_ENCODER_A = null;
-        public static final DigitalSource LEFT_ENCODER_B = null;
-        public static final DigitalSource RIGHT_ENCODER_A = null;
-        public static final DigitalSource RIGHT_ENCODER_B = null;
+        public static final int LEFT_ENCODER_A = 0;
+        public static final int LEFT_ENCODER_B = 1;
+        public static final int RIGHT_ENCODER_A = 2;
+        public static final int RIGHT_ENCODER_B = 3;
+        public static final int GYRO = 0;
     }
 
     public static class Intake {
-
-        // NOT CURRENT VALUES
         public static final int INTAKE_MOTOR = 4;
+    }
 
-        public static final DigitalSource INTAKE_ENCODER = null;
-        public static final DigitalSource ENCODER_A = null;
-        public static final DigitalSource ENCODER_B = null;
+    public class Hoist {
+        public static final int RIGHT_MOTOR = 5;
+        public static final int LEFT_MOTOR = 6;
     }
 }

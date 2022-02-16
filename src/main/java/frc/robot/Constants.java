@@ -4,9 +4,7 @@
 
 package frc.robot;
 
-import com.fasterxml.jackson.databind.jsontype.impl.StdSubtypeResolver;
-
-import edu.wpi.first.math.StateSpaceUtil;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -22,14 +20,58 @@ import edu.wpi.first.math.StateSpaceUtil;
  */
 public final class Constants {
 
+    public static class Camera {
+        public static final int WIDTH = 640;
+        public static final int HEIGHT = 480;
+    }
+
     public static class Joystick {
-        public static final double JOYSTICK_TURN_AXIS_MULTIPLIER = 0.3;
+        public static final double JOYSTICK_TURN_AXIS_MULTIPLIER = 0.6;
     }
 
     public static class DriveTrain {
 
-        public static final double ROBOT_DRIVE_WHEEL_CIRCUIT = 478.77872; // in mm
-        public static final double ENCODER_TICK_RATE = 256;
+        public static class PID {
+            // public static final double LEFT_KP = 0.00008612;
+            public static final double LEFT_KP = 0.000033905 * 2;
+            public static final double LEFT_KI = 0;
+            public static final double LEFT_KD = 0;
+
+            public static final double RIGHT_KP = 0.000034502 * 2;
+            public static final double RIGHT_KI = LEFT_KI;
+            public static final double RIGHT_KD = LEFT_KD;
+        }
+
+        public static class Feedforward {
+            public static final double KS = 1.2892;
+            public static final double KV = 2.4577;
+            public static final double KA = 0.0109;
+        }
+
+        public static class AutoConstants {
+
+            public static double kMaxSpeedMetersPerSecond = 0.50886;
+            public static double kMaxAccelerationMetersPerSecondSquared = 0.14696;
+
+            // Reasonable baseline values for a RAMSETE follower in units of meters and
+            // seconds
+            public static final double kRamseteB = 2;
+            public static final double kRamseteZeta = 0.7;
+
+        }
+
+        public static final boolean IS_LEFT_MASTER_INVERTED = true;
+        public static final boolean IS_LEFT_SLAVE_INVERTED = IS_LEFT_MASTER_INVERTED;
+
+        public static final boolean IS_RIGHT_MASTER_INVERTED = false;
+        public static final boolean IS_RIGHT_SLAVE_INVERTED = IS_RIGHT_MASTER_INVERTED;
+
+        private static final double kTrackWidthMeters = 0.5900;
+        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
+                kTrackWidthMeters);
+
+        public static final double ROBOT_DRIVE_WHEEL_CIRCUIT = 478.7787204; // in mm
+        public static final double ENCODER_TICK_RATE = 2048;
         public static final double ENCODER_MIN_RATE = 10; // Configures the encoder to consider itself stopped when it
                                                           // is bellow min rate
         public static final int ENCODER_SAMPLES_TO_AVERAGE = 5; // Can be between 1 and 127
@@ -42,8 +84,11 @@ public final class Constants {
                                                                                             // revolution of the motor
                                                                                             // [mm]
 
-        public static final double MOTOR_MIN_OUT = 0.27; // Configures the joystick to consider itself as still (0)
-                                                         // when it is bellow min rate
+        public static final double MOTOR_MIN_PERCENTAGE_OUT = 0; // Configures the motor to consider itself as still
+                                                                 // when it is bellow min rate
+        public static final double MOTOR_MIN_VOLTAGE_OUT = 0.5; // Configures the motor to consider itself as still
+                                                                // when it is bellow min rate
+        public static final double MAX_ROBOT_SPEED = 10; // Max robot speed in teleoperated mode [m/s] (1m/s = 3,6km/h)
     }
 
     public static class Intake {

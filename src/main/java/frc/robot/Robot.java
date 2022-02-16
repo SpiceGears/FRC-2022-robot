@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.IntakeSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -34,6 +33,8 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    m_robotContainer.m_DriveTrainSubsystem.resetEncoders();
+    m_robotContainer.m_DriveTrainSubsystem.calibrateGyro();
     m_robotContainer.m_IntakeSubsystem.closeIntake();
   }
 
@@ -59,12 +60,14 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
+    m_robotContainer.m_DriveTrainSubsystem.updateOdometry();
     updateSmartDashboard();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    m_robotContainer.m_DriveTrainSubsystem.resetEncoders();
   }
 
   @Override
@@ -77,7 +80,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_robotContainer.m_DriveTrainSubsystem.resetGyro();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+  
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
