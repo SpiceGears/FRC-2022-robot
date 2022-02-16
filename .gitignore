@@ -632,7 +632,7 @@ $RECYCLE.BIN/
 
 ### Gradle ###
 .gradle
-build/
+build/.
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -649,5 +649,3 @@ gradle-app.setting
 ### Gradle Patch ###
 **/build/
 
-# End of https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,eclipse,intellij+all,visualstudiocode
-*.bin
