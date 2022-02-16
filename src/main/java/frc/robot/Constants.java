@@ -20,19 +20,24 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
  */
 public final class Constants {
 
-    public static class Camera {
+    public static final class Camera {
         public static final int WIDTH = 640;
         public static final int HEIGHT = 480;
     }
 
-    public static class Joystick {
+    public static final class Joystick {
         public static final double JOYSTICK_TURN_AXIS_MULTIPLIER = 0.6;
+
+        // Button bindings
+        public static final int TOGGLE_INTAKE_ID = 3;
+        public static final int RUN_INTAKE_ID = 5;
+
+        public static final int _ID = 5;
     }
 
     public static class DriveTrain {
 
-        public static class PID {
-            // public static final double LEFT_KP = 0.00008612;
+        public static final class PID {
             public static final double LEFT_KP = 0.000033905 * 2;
             public static final double LEFT_KI = 0;
             public static final double LEFT_KD = 0;
@@ -42,16 +47,16 @@ public final class Constants {
             public static final double RIGHT_KD = LEFT_KD;
         }
 
-        public static class Feedforward {
+        public static final class Feedforward {
             public static final double KS = 1.2892;
             public static final double KV = 2.4577;
             public static final double KA = 0.0109;
         }
 
-        public static class AutoConstants {
+        public static final class AutoConstants {
 
-            public static double kMaxSpeedMetersPerSecond = 0.50886;
-            public static double kMaxAccelerationMetersPerSecondSquared = 0.14696;
+            public static final double kMaxSpeedMetersPerSecond = 0.50886;
+            public static final double kMaxAccelerationMetersPerSecondSquared = 0.14696;
 
             // Reasonable baseline values for a RAMSETE follower in units of meters and
             // seconds
@@ -91,7 +96,11 @@ public final class Constants {
         public static final double MAX_ROBOT_SPEED = 10; // Max robot speed in teleoperated mode [m/s] (1m/s = 3,6km/h)
     }
 
-    public static class Intake {
+    public static final class Hoist {
+        public static final long SOLENOID_SWITCH_OFF_DELAY = Intake.INTAKE_SOLENOID_DELAY;
+    }
+
+    public static final class Intake {
 
         public static final long INTAKE_SOLENOID_DELAY = 100; // Delay between turning the intake solenoid off
 

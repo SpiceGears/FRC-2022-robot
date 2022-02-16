@@ -25,10 +25,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.commands.Intake.SetIntakeOutput;
 import frc.robot.commands.Intake.ToggleIntake;
+import frc.robot.commands.hoist.ToggleSolenoid;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.HoistSubsystem;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -73,11 +75,19 @@ public class RobotContainer {
          * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
          */
         private void configureButtonBindings() {
-                final JoystickButton button_a = new JoystickButton(m_driverController, 1);
-                final JoystickButton button_b = new JoystickButton(m_driverController, 2);
+                final JoystickButton btToggleIntake = new JoystickButton(m_driverController,
+                                Constants.Joystick.TOGGLE_INTAKE_ID);
+                final JoystickButton btRunIntake = new JoystickButton(m_driverController,
+                                Constants.Joystick.RUN_INTAKE_ID);
+                final POVButton btToggleArms = new POVButton(m_driverController, 0);
+                final POVButton btToggleHooks = new POVButton(m_driverController, 180);
 
-                button_a.whileActiveOnce(new ToggleIntake(m_IntakeSubsystem));
-                button_b.whenPressed(new SetIntakeOutput(m_IntakeSubsystem));
+                btToggleArms.whileActiveOnce(new ToggleSolenoid(m_HoistSubsystem, m_HoistSubsystem.getArmSolenoid()));
+                btToggleHooks.whileActiveOnce(
+                                new ToggleSolenoid(m_HoistSubsystem, m_HoistSubsystem.getHooksSolenoid()));
+
+                btToggleIntake.whileActiveOnce(new ToggleIntake(m_IntakeSubsystem));
+                btRunIntake.whenPressed(new SetIntakeOutput(m_IntakeSubsystem));
 
                 m_HoistSubsystem.setDefaultCommand(
                                 new RunCommand(
@@ -158,6 +168,7 @@ public class RobotContainer {
         public void updateSmartDashboard() {
                 m_DriveTrainSubsystem.updateSmartDashboard();
                 m_IntakeSubsystem.updateSmartDashboard();
+                m_HoistSubsystem.updateSmartDashboard();
                 SmartDashboard.putNumber("joystick x", m_driverController.getRawAxis(1));
         }
 }
