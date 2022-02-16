@@ -1,10 +1,16 @@
 package frc.robot.subsystems;
 
-import org.opencv.core.Mat;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SPI.Port;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,22 +23,44 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private Spark leftMasterMotor, leftMotorSlave;
 
     private Encoder leftEncoder, rightEncoder;
+    private ADXRS450_Gyro gyro;
 
-    private PIDController lPIDMotorController = new PIDController(
-            Constants.DriveTrain.PID.LEFT_KP,
-            Constants.DriveTrain.PID.LEFT_KI,
-            Constants.DriveTrain.PID.LEFT_KD);
-    private PIDController rPIDMotorController = new PIDController(
-            Constants.DriveTrain.PID.RIGHT_KP,
-            Constants.DriveTrain.PID.RIGHT_KI,
-            Constants.DriveTrain.PID.RIGHT_KD);
+    // The motors on the left side of the drive.
+    private MotorControllerGroup leftMotors;
 
-    private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(
-            Constants.DriveTrain.Feedforward.KS,
-            Constants.DriveTrain.Feedforward.KV,
-            Constants.DriveTrain.Feedforward.KA);
+    // The motors on the right side of the drive.
+    private MotorControllerGroup rightMotors;
+
+    private DifferentialDrive diffDrive;
+    private PIDController lPIDMotorController;
+    private PIDController rPIDMotorController;
+
+    private SimpleMotorFeedforward feedforward;
+
+    // Odometry class for tracking robot pose
+    private DifferentialDriveOdometry m_odometry;
 
     public DriveTrainSubsystem() {
+        gyro = new ADXRS450_Gyro(Port.kMXP);
+
+        gyro.calibrate();
+
+        lPIDMotorController = new PIDController(
+                Constants.DriveTrain.PID.LEFT_KP,
+                Constants.DriveTrain.PID.LEFT_KI,
+                Constants.DriveTrain.PID.LEFT_KD);
+        rPIDMotorController = new PIDController(
+                Constants.DriveTrain.PID.RIGHT_KP,
+                Constants.DriveTrain.PID.RIGHT_KI,
+                Constants.DriveTrain.PID.RIGHT_KD);
+
+        feedforward = new SimpleMotorFeedforward(
+                Constants.DriveTrain.Feedforward.KS,
+                Constants.DriveTrain.Feedforward.KV,
+                Constants.DriveTrain.Feedforward.KA);
+
+        m_odometry = new DifferentialDriveOdometry(getHeading());
+
         configureMotors();
     }
 
@@ -43,11 +71,16 @@ public class DriveTrainSubsystem extends SubsystemBase {
         leftMasterMotor = new Spark(PortMap.DriveTrain.FRONT_LEFT_MOTOR);
         leftMotorSlave = new Spark(PortMap.DriveTrain.BACK_LEFT_MOTOR);
 
-        leftMasterMotor.setInverted(true);
-        leftMotorSlave.setInverted(true);
+        leftMasterMotor.setInverted(Constants.DriveTrain.IS_LEFT_MASTER_INVERTED);
+        leftMotorSlave.setInverted(Constants.DriveTrain.IS_LEFT_SLAVE_INVERTED);
 
-        rightMasterMotor.setInverted(false);
-        rightMotorSlave.setInverted(false);
+        rightMasterMotor.setInverted(Constants.DriveTrain.IS_RIGHT_MASTER_INVERTED);
+        rightMotorSlave.setInverted(Constants.DriveTrain.IS_RIGHT_SLAVE_INVERTED);
+
+        leftMotors = new MotorControllerGroup(leftMasterMotor, leftMotorSlave);
+        rightMotors = new MotorControllerGroup(rightMasterMotor, rightMotorSlave);
+
+        diffDrive = new DifferentialDrive(leftMotors, rightMotors);
 
         configureEncoders();
     }
@@ -66,20 +99,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
         rightEncoder.setMaxPeriod(Constants.DriveTrain.ENCODER_MIN_RATE);
         rightEncoder.setReverseDirection(Constants.DriveTrain.ENCODER_RIGHT_REVERSE);
         rightEncoder.setSamplesToAverage(Constants.DriveTrain.ENCODER_SAMPLES_TO_AVERAGE);
-    }
 
-    public void setLeftPercentOutput(double output) {
-        leftMasterMotor.set(output);
-        leftMotorSlave.set(output);
-
-        SmartDashboard.putNumber("Left motor out", output);
-    }
-
-    public void setRightPercentOutput(double output) {
-        rightMasterMotor.set(output);
-        rightMotorSlave.set(output);
-
-        SmartDashboard.putNumber("Right motor out", output);
+        resetEncoders();
     }
 
     public void setRawMotorPercentageOutput(double leftOut, double rightOut, double turn) {
@@ -89,8 +110,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
             rightOut = 0;
         if (Math.abs(turn) < Constants.DriveTrain.MOTOR_MIN_PERCENTAGE_OUT)
             turn = 0;
-        setLeftPercentOutput(leftOut - turn);
-        setRightPercentOutput(rightOut + turn);
+        leftMotors.set(leftOut - turn);
+        rightMotors.set(rightOut + turn);
     }
 
     /**
@@ -111,104 +132,107 @@ public class DriveTrainSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("In speedInput", speedInput);
         SmartDashboard.putNumber("In turnInput", turnInput);
 
-        // no turn
-        if (turnInput == 0) {
-            lOutput = speedInput;
-            rOutput = speedInput;
-        } else {
+        // // no turn
+        // if (turnInput == 0) {
+        // lOutput = speedInput;
+        // rOutput = speedInput;
+        // } else {
 
-            if (Math.abs(speedInput) <= 0.4) {
-                lOutput = speedInput - turnInput;
-                rOutput = speedInput + turnInput;
-            }
-            // Turn and speed added are less or equal than 100%
-            else if (Math.abs(speedInput) + Math.abs(turnInput) <= 1
-                    && Math.abs(speedInput) + Math.abs(turnInput) != 0) {
-                // Ride foreword
-                if (speedInput > 0) {
-                    // turning right
-                    if (turnInput > 0) {
-                        lOutput = speedInput + turnInput;
-                        rOutput = speedInput;
-                    }
-                    // turning left
-                    else if (turnInput < 0) {
-                        lOutput = speedInput;
-                        rOutput = speedInput - turnInput;
-                    }
-                } else {
-                    // turning right
-                    if (turnInput > 0) {
-                        lOutput = speedInput - turnInput;
-                        rOutput = speedInput;
-                    }
-                    // turning left
-                    else if (turnInput < 0) {
-                        lOutput = speedInput;
-                        rOutput = speedInput + turnInput;
-                    }
-                }
-            }
-            // Turn and speed added are greater than 100%
-            else if (Math.abs(speedInput) + Math.abs(turnInput) > 1
-                    && Math.abs(speedInput) + Math.abs(turnInput) != 0) {
-                if (Math.abs(speedInput) >= 1) {
-                    // Ride foreword
-                    if (speedInput > 0) {
-                        // turning right
-                        if (turnInput > 0) {
-                            lOutput = speedInput;
-                            rOutput = speedInput - turnInput;
-                        }
-                        // turning left
-                        else if (turnInput < 0) {
-                            lOutput = speedInput + turnInput;
-                            rOutput = speedInput;
-                        }
-                    }
-                    // Ride backward
-                    else {
-                        // turning right
-                        if (turnInput > 0) {
-                            lOutput = speedInput;
-                            rOutput = speedInput + turnInput;
-                        }
-                        // turning left
-                        else if (turnInput < 0) {
-                            lOutput = speedInput - turnInput;
-                            rOutput = speedInput;
-                        }
-                    }
-                } else {
-                    // Ride foreword
-                    if (speedInput > 0) {
-                        // turning right
-                        if (turnInput > 0) {
-                            lOutput = 1;
-                            rOutput = speedInput - (speedInput + turnInput - 1);
-                        }
-                        // turning left
-                        else if (turnInput < 0) {
-                            lOutput = speedInput - (speedInput - turnInput - 1);
-                            rOutput = 1;
-                        }
-                    }
-                    // Ride backward
-                    else {
-                        // turning right
-                        if (turnInput > 0) {
-                            lOutput = -1;
-                            rOutput = -speedInput + (speedInput + turnInput - 1);
-                        }
-                        // turning left
-                        else if (turnInput < 0) {
-                            lOutput = -speedInput + (speedInput - turnInput - 1);
-                            rOutput = -1;
-                        }
-                    }
-                }
-            }
-        }
+        // if (Math.abs(speedInput) <= 0.4) {
+        // lOutput = speedInput - turnInput;
+        // rOutput = speedInput + turnInput;
+        // }
+        // // Turn and speed added are less or equal than 100%
+        // else if (Math.abs(speedInput) + Math.abs(turnInput) <= 1
+        // && Math.abs(speedInput) + Math.abs(turnInput) != 0) {
+        // // Ride foreword
+        // if (speedInput > 0) {
+        // // turning right
+        // if (turnInput > 0) {
+        // lOutput = speedInput + turnInput;
+        // rOutput = speedInput;
+        // }
+        // // turning left
+        // else if (turnInput < 0) {
+        // lOutput = speedInput;
+        // rOutput = speedInput - turnInput;
+        // }
+        // } else {
+        // // turning right
+        // if (turnInput > 0) {
+        // lOutput = speedInput - turnInput;
+        // rOutput = speedInput;
+        // }
+        // // turning left
+        // else if (turnInput < 0) {
+        // lOutput = speedInput;
+        // rOutput = speedInput + turnInput;
+        // }
+        // }
+        // }
+        // // Turn and speed added are greater than 100%
+        // else if (Math.abs(speedInput) + Math.abs(turnInput) > 1
+        // && Math.abs(speedInput) + Math.abs(turnInput) != 0) {
+        // if (Math.abs(speedInput) >= 1) {
+        // // Ride foreword
+        // if (speedInput > 0) {
+        // // turning right
+        // if (turnInput > 0) {
+        // lOutput = speedInput;
+        // rOutput = speedInput - turnInput;
+        // }
+        // // turning left
+        // else if (turnInput < 0) {
+        // lOutput = speedInput + turnInput;
+        // rOutput = speedInput;
+        // }
+        // }
+        // // Ride backward
+        // else {
+        // // turning right
+        // if (turnInput > 0) {
+        // lOutput = speedInput;
+        // rOutput = speedInput + turnInput;
+        // }
+        // // turning left
+        // else if (turnInput < 0) {
+        // lOutput = speedInput - turnInput;
+        // rOutput = speedInput;
+        // }
+        // }
+        // } else {
+        // // Ride foreword
+        // if (speedInput > 0) {
+        // // turning right
+        // if (turnInput > 0) {
+        // lOutput = 1;
+        // rOutput = speedInput - (speedInput + turnInput - 1);
+        // }
+        // // turning left
+        // else if (turnInput < 0) {
+        // lOutput = speedInput - (speedInput - turnInput - 1);
+        // rOutput = 1;
+        // }
+        // }
+        // // Ride backward
+        // else {
+        // // turning right
+        // if (turnInput > 0) {
+        // lOutput = -1;
+        // rOutput = -speedInput + (speedInput + turnInput - 1);
+        // }
+        // // turning left
+        // else if (turnInput < 0) {
+        // lOutput = -speedInput + (speedInput - turnInput - 1);
+        // rOutput = -1;
+        // }
+        // }
+        // }
+        // }
+        // }
+
+        lOutput = speedInput + turnInput;
+        rOutput = speedInput - turnInput;
 
         lOutput *= Constants.DriveTrain.MAX_ROBOT_SPEED;
         rOutput *= Constants.DriveTrain.MAX_ROBOT_SPEED;
@@ -230,18 +254,17 @@ public class DriveTrainSubsystem extends SubsystemBase {
         // + lPIDMotorController.calculate(getLeftEncoderRate(), leftSetpoint / 100);
         // double rightOut = feedforward.calculate(rightSetpoint)
         // + rPIDMotorController.calculate(getRightEncoderRate(), rightSetpoint / 100);
-        double leftOut = lPIDMotorController.calculate(getLeftEncoderRate(), leftSetpoint * 1000);
-        double rightOut = rPIDMotorController.calculate(getRightEncoderRate(), rightSetpoint * 1000);
+        double leftOut = lPIDMotorController.calculate(getLeftEncoderRate(),
+                leftSetpoint * 1000);
+        double rightOut = rPIDMotorController.calculate(getRightEncoderRate(),
+                rightSetpoint * 1000);
 
         // if (Math.abs(leftOut) < Constants.DriveTrain.MOTOR_MIN_VOLTAGE_OUT)
         // leftOut = 0;
         // if (Math.abs(rightOut) < Constants.DriveTrain.MOTOR_MIN_VOLTAGE_OUT)
         // rightOut = 0;
-        leftMasterMotor.setVoltage(leftOut * 12);
-        leftMotorSlave.setVoltage(leftOut * 12);
 
-        rightMasterMotor.setVoltage(rightOut * 12);
-        rightMotorSlave.setVoltage(rightOut * 12);
+        tankDriveVolts(leftOut * 12, rightOut * 12);
 
         SmartDashboard.putNumber("getLeftEncoderRate()", -getLeftEncoderRate());
         SmartDashboard.putNumber("getRightEncoderRate()", getRightEncoderRate());
@@ -254,7 +277,19 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
 
     /**
-     * Function returns distance that left wheels of the robot h aas traveled.
+     * Controls the left and right sides of the drive directly with voltages.
+     *
+     * @param leftVolts  the commanded left output
+     * @param rightVolts the commanded right output
+     */
+    public void tankDriveVolts(double leftVolts, double rightVolts) {
+        leftMotors.setVoltage(leftVolts);
+        rightMotors.setVoltage(rightVolts);
+        diffDrive.feed();
+    }
+
+    /**
+     * Function returns distance that left wheels of the robot has traveled.
      * 
      * @return The distance traveled in mm.
      */
@@ -313,6 +348,78 @@ public class DriveTrainSubsystem extends SubsystemBase {
         rightEncoder.reset();
     }
 
+    public double getGyroAngle() {
+        return gyro.getAngle();
+    }
+
+    // public Rotation2d getGyroRotation2D() {
+    // return gyro.getRotation2d();
+    // }
+
+    /**
+     * Returns the currently-estimated pose of the robot.
+     *
+     * @return The pose.
+     */
+    public Pose2d getPose() {
+        return m_odometry.getPoseMeters();
+    }
+
+    /**
+     * Resets the odometry to the specified pose.
+     *
+     * @param pose The pose to which to set the odometry.
+     */
+    public void resetOdometry(Pose2d pose) {
+        resetEncoders();
+        m_odometry.resetPosition(pose, getHeading());
+    }
+
+    /**
+     * Returns the heading of the robot.
+     *
+     * @return the robot's heading in degrees, from -180 to 180
+     */
+    public Rotation2d getHeading() {
+        return Rotation2d.fromDegrees(-getGyroAngle());
+    }
+
+    /** Zeroes the heading of the robot. */
+    public void zeroHeading() {
+        gyro.reset();
+    }
+
+    public void updateOdometry() {
+        m_odometry.update(
+                getHeading(), getLeftEncoderDistance() * 0.001, getRightEncoderDistance() * 0.001);
+    }
+
+    /**
+     * Returns the current wheel speeds of the robot.
+     *
+     * @return The current wheel speeds.
+     */
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(getLeftEncoderRate(), getRightEncoderRate());
+    }
+
+    public void resetGyro() {
+        gyro.reset();
+    }
+
+    public void calibrateGyro() {
+        gyro.calibrate();
+    }
+
+    /**
+     * Returns the turn rate of the robot.
+     *
+     * @return The turn rate of the robot, in degrees per second
+     */
+    public double getTurnRate() {
+        return gyro.getRate();
+    }
+
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("Left encoder rate", getLeftEncoderRate());
         SmartDashboard.putNumber("Right encoder rate", getRightEncoderRate());
@@ -320,5 +427,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Right encoder distance", getRightEncoderDistance());
         SmartDashboard.putNumber("Left encoder speed", getLeftEncoderSpeed());
         SmartDashboard.putNumber("Right encoder speed", getRightEncoderSpeed());
+        SmartDashboard.putNumber("Gyro angle", getGyroAngle());
+        SmartDashboard.putNumber("Gyro rate", gyro.getRate());
+        SmartDashboard.putBoolean("Gyro", gyro.isConnected());
+        SmartDashboard.putNumber("Gyro getHeading", getHeading().getDegrees());
+        SmartDashboard.putNumber("Gyro getHeading", getHeading().getRadians());
     }
 }

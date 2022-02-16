@@ -28,6 +28,9 @@
   "java.test.defaultConfig": "WPIlibUnitTests",
   "cSpell.words": [
     "Feedforward",
-    "teleop"
+    "odometry",
+    "ramsete",
+    "teleop",
+    "teleoperated"
   ]
 }

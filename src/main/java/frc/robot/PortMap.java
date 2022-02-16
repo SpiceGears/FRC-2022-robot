@@ -4,12 +4,8 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DigitalSource;
-
 /** Add your docs here. */
 public class PortMap {
-
-    public static final int FREE_VICTOR_SP = 4;
 
     public static class DriveTrain {
         public static final int FRONT_LEFT_MOTOR = 3;
@@ -22,6 +18,11 @@ public class PortMap {
         public static final int LEFT_ENCODER_B = 1;
         public static final int RIGHT_ENCODER_A = 2;
         public static final int RIGHT_ENCODER_B = 3;
+        public static final int GYRO = 0;
+    }
+
+    public static class Intake {
+        public static final int INTAKE_MOTOR = 4;
     }
 
     public class Hoist {
