@@ -15,7 +15,6 @@ import frc.robot.PortMap;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-    private Compressor compressor;
     private VictorSP intakeMotor;
     // private Encoder intakeEncoder;
     private DoubleSolenoid intakeSolenoid;
@@ -49,7 +48,6 @@ public class IntakeSubsystem extends SubsystemBase {
      */
 
     private void configureSolenoids() {
-        compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 
         intakeSolenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 1, 0); // NOT CURRENT
         intakeSolenoid.set(Value.kOff);
