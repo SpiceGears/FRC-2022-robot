@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.commands.Intake.SetIntakeOutput;
 import frc.robot.commands.Intake.ToggleIntake;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.HoistSubsystem;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -42,9 +43,8 @@ public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         public DriveTrainSubsystem m_DriveTrainSubsystem = new DriveTrainSubsystem();
         public Camera cameraSubsystem = new Camera();
-        // private final DriveTrainSubsystem m_DriveTrainSubsystem = new
-        // DriveTrainSubsystem();
         public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+        public HoistSubsystem m_HoistSubsystem = new HoistSubsystem();
 
         XboxController m_driverController = new XboxController(0);
 
@@ -78,6 +78,14 @@ public class RobotContainer {
 
                 button_a.whileActiveOnce(new ToggleIntake(m_IntakeSubsystem));
                 button_b.whenPressed(new SetIntakeOutput(m_IntakeSubsystem));
+
+                m_HoistSubsystem.setDefaultCommand(
+                                new RunCommand(
+                                                () -> {
+                                                        m_HoistSubsystem.setPercentageMotorOut(
+                                                                        m_driverController.getRawAxis(2),
+                                                                        m_driverController.getRawAxis(3));
+                                                }, m_HoistSubsystem));
         }
 
         /**

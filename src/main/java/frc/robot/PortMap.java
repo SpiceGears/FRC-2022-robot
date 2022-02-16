@@ -22,8 +22,11 @@ public class PortMap {
     }
 
     public static class Intake {
-
-        // NOT CURRENT VALUES
         public static final int INTAKE_MOTOR = 4;
+    }
+
+    public class Hoist {
+        public static final int RIGHT_MOTOR = 5;
+        public static final int LEFT_MOTOR = 6;
     }
 }
