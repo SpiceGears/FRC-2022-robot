@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.hoist.ToggleSolenoid;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,6 +37,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_DriveTrainSubsystem.resetEncoders();
     m_robotContainer.m_DriveTrainSubsystem.calibrateGyro();
     m_robotContainer.m_IntakeSubsystem.closeIntake();
+    m_robotContainer.resetRobot();
   }
 
   /**
@@ -49,6 +51,7 @@ public class Robot extends TimedRobot {
    * and
    * SmartDashboard integrated updating.
    */
+
   @Override
   public void robotPeriodic() {
     // Runs the Scheduler. This is responsible for polling buttons, adding
@@ -82,7 +85,6 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_robotContainer.m_DriveTrainSubsystem.resetGyro();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-  
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

@@ -98,26 +98,22 @@ public final class Constants {
 
     public static final class Hoist {
         public static final long SOLENOID_SWITCH_OFF_DELAY = Intake.INTAKE_SOLENOID_DELAY;
+
+        public static final boolean IS_RIGHT_MOTOR_INVERTED = false;
+        public static final boolean IS_LEFT_MOTOR_INVERTED = IS_RIGHT_MOTOR_INVERTED;
+
+        public static final double DISTANCE_PER_ROTATION = 150; // Average distance [mm]
+        public static final boolean ENCODER_REVERSE = false;
+        public static final double ENCODER_MIN_RATE = 10;
+        public static final int ENCODER_SAMPLES_TO_AVERAGE = 5;
+
+        public static final int MAX_ENCODER_VALUE = 20000;
     }
 
     public static final class Intake {
+        public static final long INTAKE_SOLENOID_DELAY = 120; // Delay between turning the intake solenoid off
 
-        public static final long INTAKE_SOLENOID_DELAY = 100; // Delay between turning the intake solenoid off
-
-        public static final double INTAKE_MOTOR_OUTPUT = 0.5; // Intake motor output from 0 to 1
-        // NOT CURRENT V
-        public static final double ROBOT_INTAKE_WHEEL_CIRCUIT = 100; // [mm]
-        public static final double ENCODER_TICK_RATE = 256;
-        public static final double ENCODER_MIN_RATE = 10; // Configures the encoder to consider itself stopped when it
-                                                          // is bellow min rate
-        public static final double ROBOT_DISTANCE_PER_ROTATION = ROBOT_INTAKE_WHEEL_CIRCUIT; // The distance the robot
-                                                                                             // will travel with one
-                                                                                             // revolution of the motor
-                                                                                             // [mm]
-
-        public static final int ENCODER_SAMPLES_TO_AVERAGE = 5; // Can be between 1 and 127
-
-        public static final boolean ENCODER_REVERSE = false;
+        public static final double INTAKE_MOTOR_OUTPUT = 1; // Intake motor output from 0 to 1
 
     }
 }

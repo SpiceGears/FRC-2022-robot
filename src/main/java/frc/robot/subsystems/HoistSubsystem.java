@@ -4,33 +4,27 @@
 
 package frc.robot.subsystems;
 
-import java.lang.reflect.Array;
-import java.util.concurrent.atomic.DoubleAccumulator;
-
-import com.fasterxml.jackson.databind.node.POJONode;
-
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.PortMap;
+import frc.robot.commands.hoist.ToggleSolenoid;
 
 public class HoistSubsystem extends SubsystemBase {
   /** Creates a new Hoist. */
-
-  private VictorSP rightMotor, leftMotor;
-  private MotorControllerGroup hoistMotors;
-
-  private Compressor compressor;
-
   public static class HoistSolenoid {
     public DoubleSolenoid solenoid;
     /** True menes open */
-    public boolean isSolenoidForeword = false;
+    public boolean isSolenoidForeword = true;
 
     public HoistSolenoid(int forwardChannel, int reverseChannel) {
       solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, forwardChannel, reverseChannel);
@@ -45,36 +39,83 @@ public class HoistSubsystem extends SubsystemBase {
     }
   }
 
-  HoistSolenoid armSolenoid, hookSolenoid;
+  private Compressor compressor;
+  private HoistSolenoid armSolenoid, hookSolenoid;
 
-  private boolean isArmSolenoidForeword, isHookSolenoidForeword = false;
+  private VictorSP rightMotor, leftMotor;
+  private MotorControllerGroup hoistMotors;
+
+  private Encoder hoistEncoder;
+  private DigitalInput limitSwitch;
 
   public HoistSubsystem() {
-    rightMotor = new VictorSP(PortMap.Hoist.RIGHT_MOTOR);
-    leftMotor = new VictorSP(PortMap.Hoist.LEFT_MOTOR);
+    limitSwitch = new DigitalInput(6);
 
+    configurePneumatics();
+    configureMotors();
+    configureEncoder();
+  }
+
+  private void configurePneumatics() {
     compressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
     compressor.enableDigital();
 
     armSolenoid = new HoistSolenoid(PortMap.Hoist.ARM_SOLENOID_FOREWORD, PortMap.Hoist.ARM_SOLENOID_REVERSE);
     hookSolenoid = new HoistSolenoid(PortMap.Hoist.HOOK_SOLENOID_FOREWORD, PortMap.Hoist.HOOK_SOLENOID_REVERSE);
-
-    configureMotors();
   }
 
   private void configureMotors() {
-    rightMotor.setInverted(false);
-    leftMotor.setInverted(false);
+    rightMotor = new VictorSP(PortMap.Hoist.RIGHT_MOTOR);
+    leftMotor = new VictorSP(PortMap.Hoist.LEFT_MOTOR);
+
+    leftMotor.setInverted(Constants.Hoist.IS_LEFT_MOTOR_INVERTED);
+    rightMotor.setInverted(Constants.Hoist.IS_RIGHT_MOTOR_INVERTED);
 
     hoistMotors = new MotorControllerGroup(rightMotor, leftMotor);
   }
 
+  private void configureEncoder() {
+    hoistEncoder = new Encoder(PortMap.Hoist.ENCODER_A, PortMap.Hoist.ENCODER_B);
+    hoistEncoder.setDistancePerPulse(
+        Constants.Hoist.DISTANCE_PER_ROTATION / Constants.DriveTrain.ENCODER_TICK_RATE);
+    hoistEncoder.setMaxPeriod(Constants.Hoist.ENCODER_MIN_RATE);
+    hoistEncoder.setReverseDirection(Constants.Hoist.ENCODER_REVERSE);
+    hoistEncoder.setSamplesToAverage(Constants.Hoist.ENCODER_SAMPLES_TO_AVERAGE);
+
+    hoistEncoder.reset();
+  }
+
   @Override
   public void periodic() {
+    resetOnLimitSwitch();
+  }
+
+  private boolean limitSwitchState = false;
+
+  public void resetOnLimitSwitch() {
+
+    if (limitSwitch.get() && !limitSwitchState) {
+      resetEncoder();
+      limitSwitchState = true;
+    }
+
+    if (!limitSwitch.get()) {
+      limitSwitchState = false;
+    }
+
   }
 
   public void setPercentageMotorOut(double out, double back) {
-    hoistMotors.set(out - back);
+    out = out - back;
+
+    // if (hoistEncoder.getRaw() < 0 && out < 0) {
+    // out = 0;
+    // } else if (hoistEncoder.getRaw() >= Constants.Hoist.MAX_ENCODER_VALUE && out
+    // > 0) {
+    // out = 0;
+    // }
+
+    hoistMotors.set(out);
   }
 
   public HoistSolenoid getHooksSolenoid() {
@@ -85,10 +126,25 @@ public class HoistSubsystem extends SubsystemBase {
     return armSolenoid;
   }
 
+  public int getEncoderRaw() {
+    return hoistEncoder.getRaw();
+  }
+
+  public void resetEncoder() {
+    hoistEncoder.reset();
+  }
+
   public void updateSmartDashboard() {
     SmartDashboard.putNumber("Hoist percentage out", hoistMotors.get());
     SmartDashboard.putBoolean("Hoist hook solenoid", getHooksSolenoid().isSolenoidForeword);
     SmartDashboard.putBoolean("Hoist arm solenoid", getArmSolenoid().isSolenoidForeword);
+    SmartDashboard.putNumber("Hoist encoder", getEncoderRaw());
+    SmartDashboard.putBoolean("limit switch", limitSwitch.get());
+    SmartDashboard.putBoolean("limit switch state", limitSwitchState);
+  }
+
+  public void resetSubsystem() {
+    CommandScheduler.getInstance().schedule(new ToggleSolenoid(this, getArmSolenoid()));
   }
 
 }

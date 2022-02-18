@@ -259,11 +259,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
         double rightOut = rPIDMotorController.calculate(getRightEncoderRate(),
                 rightSetpoint * 1000);
 
-        // if (Math.abs(leftOut) < Constants.DriveTrain.MOTOR_MIN_VOLTAGE_OUT)
-        // leftOut = 0;
-        // if (Math.abs(rightOut) < Constants.DriveTrain.MOTOR_MIN_VOLTAGE_OUT)
-        // rightOut = 0;
-
         tankDriveVolts(leftOut * 12, rightOut * 12);
 
         SmartDashboard.putNumber("getLeftEncoderRate()", -getLeftEncoderRate());
@@ -420,6 +415,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
         return gyro.getRate();
     }
 
+    public void stopMotors() {
+        tankDriveVolts(0, 0);
+    }
+
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("Left encoder rate", getLeftEncoderRate());
         SmartDashboard.putNumber("Right encoder rate", getRightEncoderRate());
@@ -432,5 +431,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Gyro", gyro.isConnected());
         SmartDashboard.putNumber("Gyro getHeading", getHeading().getDegrees());
         SmartDashboard.putNumber("Gyro getHeading", getHeading().getRadians());
+    }
+
+    public void resetSubsystem() {
+        stopMotors();
+        resetEncoders();
+        resetGyro();
     }
 }

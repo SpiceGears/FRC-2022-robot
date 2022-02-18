@@ -34,5 +34,8 @@ public final class PortMap {
 
         public static final int HOOK_SOLENOID_FOREWORD = 4;
         public static final int HOOK_SOLENOID_REVERSE = 5;
+
+        public static final int ENCODER_A = 4;
+        public static final int ENCODER_B = 5;
     }
 }

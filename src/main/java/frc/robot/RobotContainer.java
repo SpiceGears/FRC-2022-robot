@@ -87,7 +87,7 @@ public class RobotContainer {
                                 new ToggleSolenoid(m_HoistSubsystem, m_HoistSubsystem.getHooksSolenoid()));
 
                 btToggleIntake.whileActiveOnce(new ToggleIntake(m_IntakeSubsystem));
-                btRunIntake.whenPressed(new SetIntakeOutput(m_IntakeSubsystem));
+                btRunIntake.whileActiveContinuous(new SetIntakeOutput(m_IntakeSubsystem));
 
                 m_HoistSubsystem.setDefaultCommand(
                                 new RunCommand(
@@ -96,6 +96,11 @@ public class RobotContainer {
                                                                         m_driverController.getRawAxis(2),
                                                                         m_driverController.getRawAxis(3));
                                                 }, m_HoistSubsystem));
+        }
+
+        public void resetRobot() {
+                m_DriveTrainSubsystem.resetSubsystem();
+                m_HoistSubsystem.resetSubsystem();
         }
 
         /**

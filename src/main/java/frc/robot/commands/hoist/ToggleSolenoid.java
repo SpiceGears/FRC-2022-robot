@@ -7,8 +7,6 @@ package frc.robot.commands.hoist;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.fasterxml.jackson.databind.ser.std.NumberSerializers.DoubleSerializer;
-
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.CommandBase;
