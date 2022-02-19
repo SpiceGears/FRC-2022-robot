@@ -11,7 +11,7 @@ In order to properly run the program:
 
 # Robot design
 
-The robot was designed in Solidworks 2022, you can download it [here](#).
+The robot was designed in Solidworks 2022, you can download it [here](https://grabcad.com/library/spice-gears-5883-frc-robot-1).
 
 ### Electronics in robot
 
@@ -39,6 +39,6 @@ and others:
 
 Here you can see the rendered image of the robot, unfortunately we did not have the money to build the whole robot.
 
-\*You can see more images **[here](images/)\***
+_You can see more images **[here](images/)**_
 
 ![Robot render image](images/Robot.png)
