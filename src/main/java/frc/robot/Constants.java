@@ -107,6 +107,12 @@ public final class Constants {
         public static final double ENCODER_MIN_RATE = 10;
         public static final int ENCODER_SAMPLES_TO_AVERAGE = 5;
 
+        public static class PID {
+            public static final double KP = 0.00008612;
+            public static final double KI = 0;
+            public static final double KD = 0;
+        }
+
         public static final int MAX_ENCODER_VALUE = 20000;
     }
 

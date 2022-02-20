@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -48,6 +49,8 @@ public class HoistSubsystem extends SubsystemBase {
   private Encoder hoistEncoder;
   private DigitalInput limitSwitch;
 
+  private PIDController PIDMotorController;
+
   public HoistSubsystem() {
     limitSwitch = new DigitalInput(6);
 
@@ -62,6 +65,15 @@ public class HoistSubsystem extends SubsystemBase {
 
     armSolenoid = new HoistSolenoid(PortMap.Hoist.ARM_SOLENOID_FOREWORD, PortMap.Hoist.ARM_SOLENOID_REVERSE);
     hookSolenoid = new HoistSolenoid(PortMap.Hoist.HOOK_SOLENOID_FOREWORD, PortMap.Hoist.HOOK_SOLENOID_REVERSE);
+
+    PIDMotorController = new PIDController(
+            Constants.Hoist.PID.KP,
+            Constants.Hoist.PID.KI,
+            Constants.Hoist.PID.KD
+    );
+
+    configureMotors();
+
   }
 
   private void configureMotors() {
