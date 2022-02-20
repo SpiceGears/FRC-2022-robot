@@ -116,6 +116,23 @@ public class HoistSubsystem extends SubsystemBase {
     }
 
   }
+  // limits pneumatics by how many tricks they can eject
+  public void limitPneumatics(double joystickValue) {
+
+    double limitOfTricks = 10 * Constants.Hoist.DISTANCE_PER_ROTATION; // limits by how many tricks pneumatics can eject
+    double secLimitOftricks = 4 * Constants.Hoist.DISTANCE_PER_ROTATION;
+
+    if (limitSwitchState = true) {
+      if (joystickValue < 0.0 && hoistEncoder.getDistance() > limitOfTricks) {
+        armSolenoid.solenoid.toggle();
+      }
+    } else {
+      if (joystickValue < 0.0 && hoistEncoder.getDistance() > secLimitOftricks) {
+        armSolenoid.solenoid.toggle();
+      }
+    }
+
+  }
 
   public void setPercentageMotorOut(double out, double back) {
     out = out - back;
